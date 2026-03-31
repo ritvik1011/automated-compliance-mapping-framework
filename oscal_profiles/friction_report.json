@@ -1,0 +1,279 @@
+{
+  "total_articles": 5,
+  "friction_distribution": {
+    "High": 3,
+    "Medium": 1,
+    "Low": 1
+  },
+  "high_friction_count": 3,
+  "medium_friction_count": 1,
+  "low_friction_count": 1,
+  "assessments": [
+    {
+      "article_id": "gdpr-art-32",
+      "regulation": "GDPR",
+      "title": "Security of processing",
+      "friction_level": "High",
+      "friction_score": 10.0,
+      "automatable_status": "Non-Binary / Qualitative Governance Review Required",
+      "detected_triggers": [
+        "appropriate",
+        "costs of implementation",
+        "nature, scope, context and purposes",
+        "organisational measures",
+        "regularly",
+        "state of the art",
+        "taking into account",
+        "timely"
+      ],
+      "ambiguity_details": [
+        {
+          "phrase": "state of the art",
+          "category": "Technological Indeterminacy",
+          "context_excerpt": "Taking into account the state of the art, the costs of implementation and the nature, scope, context and purposes of processing as well as the risk of varying likelihood and severity for the rights and freedoms of natural persons, the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk.",
+          "weight": 3.0
+        },
+        {
+          "phrase": "timely",
+          "category": "Temporal Indeterminacy",
+          "context_excerpt": "Incident Recovery and Restoration The ability to restore the availability and access to personal data in a timely manner in the event of a physical or technical incident.",
+          "weight": 1.5
+        },
+        {
+          "phrase": "regularly",
+          "category": "Temporal Indeterminacy",
+          "context_excerpt": "Evaluation of Effectiveness A process for regularly testing, assessing and evaluating the effectiveness of technical and organisational measures for ensuring the security of the processing.",
+          "weight": 1.2
+        },
+        {
+          "phrase": "appropriate",
+          "category": "Proportionality & Discretion",
+          "context_excerpt": "Taking into account the state of the art, the costs of implementation and the nature, scope, context and purposes of processing as well as the risk of varying likelihood and severity for the rights and freedoms of natural persons, the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk.",
+          "weight": 1.8
+        },
+        {
+          "phrase": "appropriate",
+          "category": "Proportionality & Discretion",
+          "context_excerpt": "Taking into account the state of the art, the costs of implementation and the nature, scope, context and purposes of processing as well as the risk of varying likelihood and severity for the rights and freedoms of natural persons, the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk.",
+          "weight": 1.8
+        },
+        {
+          "phrase": "costs of implementation",
+          "category": "Economic Balancing",
+          "context_excerpt": "Taking into account the state of the art, the costs of implementation and the nature, scope, context and purposes of processing as well as the risk of varying likelihood and severity for the rights and freedoms of natural persons, the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk.",
+          "weight": 2.5
+        },
+        {
+          "phrase": "nature, scope, context and purposes",
+          "category": "Contextual Balancing",
+          "context_excerpt": "Taking into account the state of the art, the costs of implementation and the nature, scope, context and purposes of processing as well as the risk of varying likelihood and severity for the rights and freedoms of natural persons, the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk.",
+          "weight": 2.5
+        },
+        {
+          "phrase": "taking into account",
+          "category": "Contextual Balancing",
+          "context_excerpt": "Taking into account the state of the art, the costs of implementation and the nature, scope, context and purposes of processing as well as the risk of varying likelihood and severity for the rights and freedoms of natural persons, the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk.",
+          "weight": 1.5
+        },
+        {
+          "phrase": "organisational measures",
+          "category": "Socio-Organisational",
+          "context_excerpt": "Taking into account the state of the art, the costs of implementation and the nature, scope, context and purposes of processing as well as the risk of varying likelihood and severity for the rights and freedoms of natural persons, the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk.",
+          "weight": 2.0
+        },
+        {
+          "phrase": "organisational measures",
+          "category": "Socio-Organisational",
+          "context_excerpt": "Evaluation of Effectiveness A process for regularly testing, assessing and evaluating the effectiveness of technical and organisational measures for ensuring the security of the processing.",
+          "weight": 2.0
+        }
+      ],
+      "reason": "Mandates 'state of the art' protections without prescribing static cryptographic or architectural baselines. Hardcoding fixed parameters (e.g., TLS 1.3 or specific AES modes) into static Policy-as-Code creates rapid obsolescence and false assurance as cryptographic standards evolve. Contains subjective proportionality standards ('appropriate', 'proportionate', 'reasonable'). A binary boolean evaluation (Pass/Fail) cannot weigh the entity's size, operational risk profile, or threat environment against the technical burden of implementation. Requires balancing security controls against the 'costs of implementation' and the 'nature, scope, context and purposes of processing'. Economic feasibility and contextual business necessity are fundamentally socio-organizational judgments inaccessible to static code scanners. Relies on open-ended temporal thresholds ('without undue delay', 'timely', 'promptly'). While log event timestamps can measure elapsed time, determining whether a delay was 'undue' depends on forensic complexity and containment velocity. Enforces organizational, governance, or human factor safeguards (e.g., 'organisational measures', 'awareness', 'competent staff'). Cloud infrastructure assertions cannot ascertain human training retention, segregation of duties efficacy, or governance meeting integrity.",
+      "recommendation": "Establish an automated telemetry pipeline linked to NIST/ENISA vulnerability repositories to dynamically refresh baseline benchmarks. Implement a Tiered Control Matrix where automated CI/CD checks enforce minimal hygiene, while context-dependent risk waivers are reviewed by GRC leadership.",
+      "hitl_validation_steps": [
+        "Quarterly Cryptographic & Architecture Review by the Principal Security Architect.",
+        "Documented Risk Acceptance & Proportionality Rationale signed off by the CISO/Data Protection Officer (DPO).",
+        "Annual Cost-Benefit & Impact Assessment attesting to control proportionality.",
+        "Post-Incident Triage Review validating incident timeline logs against operational complexity records.",
+        "Human-in-the-Loop verification of training completion metrics and role-based access review attestations."
+      ]
+    },
+    {
+      "article_id": "gdpr-art-33",
+      "regulation": "GDPR",
+      "title": "Notification of a personal data breach to the supervisory authority",
+      "friction_level": "High",
+      "friction_score": 6.6,
+      "automatable_status": "Non-Binary / Qualitative Governance Review Required",
+      "detected_triggers": [
+        "appropriate",
+        "undue delay",
+        "where feasible",
+        "without undue delay"
+      ],
+      "ambiguity_details": [
+        {
+          "phrase": "without undue delay",
+          "category": "Temporal Indeterminacy",
+          "context_excerpt": "In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons.",
+          "weight": 2.0
+        },
+        {
+          "phrase": "undue delay",
+          "category": "Temporal Indeterminacy",
+          "context_excerpt": "In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons.",
+          "weight": 2.0
+        },
+        {
+          "phrase": "appropriate",
+          "category": "Proportionality & Discretion",
+          "context_excerpt": "Remediation Measures Describe the measures taken or proposed to be taken by the controller to address the personal data breach, including, where appropriate, measures to mitigate its possible adverse effects.",
+          "weight": 1.8
+        },
+        {
+          "phrase": "where feasible",
+          "category": "Conditional Feasibility",
+          "context_excerpt": "In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons.",
+          "weight": 2.0
+        }
+      ],
+      "reason": "Contains subjective proportionality standards ('appropriate', 'proportionate', 'reasonable'). A binary boolean evaluation (Pass/Fail) cannot weigh the entity's size, operational risk profile, or threat environment against the technical burden of implementation. Relies on open-ended temporal thresholds ('without undue delay', 'timely', 'promptly'). While log event timestamps can measure elapsed time, determining whether a delay was 'undue' depends on forensic complexity and containment velocity.",
+      "recommendation": "Implement a Tiered Control Matrix where automated CI/CD checks enforce minimal hygiene, while context-dependent risk waivers are reviewed by GRC leadership.",
+      "hitl_validation_steps": [
+        "Documented Risk Acceptance & Proportionality Rationale signed off by the CISO/Data Protection Officer (DPO).",
+        "Post-Incident Triage Review validating incident timeline logs against operational complexity records."
+      ]
+    },
+    {
+      "article_id": "dora-art-19",
+      "regulation": "DORA",
+      "title": "Reporting of major ICT-related incidents",
+      "friction_level": "Low",
+      "friction_score": 0.0,
+      "automatable_status": "Deterministic / Direct Policy-as-Code Assertion Feasible",
+      "detected_triggers": [],
+      "ambiguity_details": [],
+      "reason": "Control provisions exhibit high linguistic determinism with concrete obligations (e.g., specific reporting deadlines, formalized procedures). This requirement can be reliably translated into deterministic Policy-as-Code checks (e.g., Open Policy Agent/Rego rules or Cloud Custodian filters).",
+      "recommendation": "Directly codify into CI/CD deployment gates and real-time infrastructure policy enforcement.",
+      "hitl_validation_steps": [
+        "Automated integration test validation in deployment pipelines.",
+        "Audit log ingestion of policy evaluation telemetry."
+      ]
+    },
+    {
+      "article_id": "dora-art-6",
+      "regulation": "DORA",
+      "title": "ICT risk management framework",
+      "friction_level": "Medium",
+      "friction_score": 3.8,
+      "automatable_status": "Hybrid / HITL Attestation & Quantitative Baseline Required",
+      "detected_triggers": [
+        "overall risk profile",
+        "proportionate"
+      ],
+      "ambiguity_details": [
+        {
+          "phrase": "proportionate",
+          "category": "Proportionality & Discretion",
+          "context_excerpt": "Financial entities shall have in place a sound, comprehensive and well-documented ICT risk management framework as part of their overall risk management system, which enables them to address ICT risk quickly and efficiently and to ensure a high level of digital operational resilience that is proportionate to their size and overall risk profile.",
+          "weight": 2.0
+        },
+        {
+          "phrase": "overall risk profile",
+          "category": "Risk Balancing",
+          "context_excerpt": "Financial entities shall have in place a sound, comprehensive and well-documented ICT risk management framework as part of their overall risk management system, which enables them to address ICT risk quickly and efficiently and to ensure a high level of digital operational resilience that is proportionate to their size and overall risk profile.",
+          "weight": 1.8
+        }
+      ],
+      "reason": "Contains subjective proportionality standards ('appropriate', 'proportionate', 'reasonable'). A binary boolean evaluation (Pass/Fail) cannot weigh the entity's size, operational risk profile, or threat environment against the technical burden of implementation.",
+      "recommendation": "Implement a Tiered Control Matrix where automated CI/CD checks enforce minimal hygiene, while context-dependent risk waivers are reviewed by GRC leadership.",
+      "hitl_validation_steps": [
+        "Documented Risk Acceptance & Proportionality Rationale signed off by the CISO/Data Protection Officer (DPO)."
+      ]
+    },
+    {
+      "article_id": "nis2-art-21",
+      "regulation": "NIS2",
+      "title": "Cybersecurity risk-management measures",
+      "friction_level": "High",
+      "friction_score": 10.0,
+      "automatable_status": "Non-Binary / Qualitative Governance Review Required",
+      "detected_triggers": [
+        "appropriate",
+        "appropriate and proportionate",
+        "organisational measures",
+        "proportionate",
+        "state of the art",
+        "taking into account"
+      ],
+      "ambiguity_details": [
+        {
+          "phrase": "state of the art",
+          "category": "Technological Indeterminacy",
+          "context_excerpt": "Taking into account the state of the art and, where applicable, relevant European and international standards, as well as the cost of implementation, the measures shall ensure a level of security of network and information systems appropriate to the risks posed.",
+          "weight": 3.0
+        },
+        {
+          "phrase": "appropriate and proportionate",
+          "category": "Proportionality & Discretion",
+          "context_excerpt": "Member States shall ensure that essential and important entities take appropriate and proportionate technical, operational and organisational measures to manage the risks posed to the security of network and information systems which those entities use for their operations or for the provision of their services, and to prevent or minimise the impact of incidents on recipients of their services and on other services.",
+          "weight": 3.0
+        },
+        {
+          "phrase": "appropriate",
+          "category": "Proportionality & Discretion",
+          "context_excerpt": "Member States shall ensure that essential and important entities take appropriate and proportionate technical, operational and organisational measures to manage the risks posed to the security of network and information systems which those entities use for their operations or for the provision of their services, and to prevent or minimise the impact of incidents on recipients of their services and on other services.",
+          "weight": 1.8
+        },
+        {
+          "phrase": "appropriate",
+          "category": "Proportionality & Discretion",
+          "context_excerpt": "Taking into account the state of the art and, where applicable, relevant European and international standards, as well as the cost of implementation, the measures shall ensure a level of security of network and information systems appropriate to the risks posed.",
+          "weight": 1.8
+        },
+        {
+          "phrase": "proportionate",
+          "category": "Proportionality & Discretion",
+          "context_excerpt": "Member States shall ensure that essential and important entities take appropriate and proportionate technical, operational and organisational measures to manage the risks posed to the security of network and information systems which those entities use for their operations or for the provision of their services, and to prevent or minimise the impact of incidents on recipients of their services and on other services.",
+          "weight": 2.0
+        },
+        {
+          "phrase": "taking into account",
+          "category": "Contextual Balancing",
+          "context_excerpt": "Member States shall ensure that essential and important entities take appropriate and proportionate technical, operational and organisational measures to manage the risks posed to the security of network and information systems which those entities use for their operations or for the provision of their services, and to prevent or minimise the impact of incidents on recipients of their services and on other services.",
+          "weight": 1.5
+        },
+        {
+          "phrase": "organisational measures",
+          "category": "Socio-Organisational",
+          "context_excerpt": "Member States shall ensure that essential and important entities take appropriate and proportionate technical, operational and organisational measures to manage the risks posed to the security of network and information systems which those entities use for their operations or for the provision of their services, and to prevent or minimise the impact of incidents on recipients of their services and on other services.",
+          "weight": 2.0
+        }
+      ],
+      "reason": "Mandates 'state of the art' protections without prescribing static cryptographic or architectural baselines. Hardcoding fixed parameters (e.g., TLS 1.3 or specific AES modes) into static Policy-as-Code creates rapid obsolescence and false assurance as cryptographic standards evolve. Contains subjective proportionality standards ('appropriate', 'proportionate', 'reasonable'). A binary boolean evaluation (Pass/Fail) cannot weigh the entity's size, operational risk profile, or threat environment against the technical burden of implementation. Requires balancing security controls against the 'costs of implementation' and the 'nature, scope, context and purposes of processing'. Economic feasibility and contextual business necessity are fundamentally socio-organizational judgments inaccessible to static code scanners. Enforces organizational, governance, or human factor safeguards (e.g., 'organisational measures', 'awareness', 'competent staff'). Cloud infrastructure assertions cannot ascertain human training retention, segregation of duties efficacy, or governance meeting integrity.",
+      "recommendation": "Establish an automated telemetry pipeline linked to NIST/ENISA vulnerability repositories to dynamically refresh baseline benchmarks. Implement a Tiered Control Matrix where automated CI/CD checks enforce minimal hygiene, while context-dependent risk waivers are reviewed by GRC leadership.",
+      "hitl_validation_steps": [
+        "Quarterly Cryptographic & Architecture Review by the Principal Security Architect.",
+        "Documented Risk Acceptance & Proportionality Rationale signed off by the CISO/Data Protection Officer (DPO).",
+        "Annual Cost-Benefit & Impact Assessment attesting to control proportionality.",
+        "Human-in-the-Loop verification of training completion metrics and role-based access review attestations."
+      ]
+    }
+  ],
+  "common_ambiguities": {
+    "appropriate": 3,
+    "organisational measures": 2,
+    "state of the art": 2,
+    "taking into account": 2,
+    "proportionate": 2,
+    "costs of implementation": 1,
+    "nature, scope, context and purposes": 1,
+    "regularly": 1,
+    "timely": 1,
+    "undue delay": 1,
+    "where feasible": 1,
+    "without undue delay": 1,
+    "overall risk profile": 1,
+    "appropriate and proportionate": 1
+  }
+}
