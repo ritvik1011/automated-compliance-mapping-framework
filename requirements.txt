@@ -2,3 +2,10 @@ pydantic>=2.0.0
 pyyaml>=6.0
 rich>=13.0.0  # For beautiful terminal output of friction reports
 pytest>=7.0.0 # For testing
+pytest-cov>=4.0.0 # For code coverage reporting
+jsonschema>=4.20.0 # For OSCAL schema validation
+regex>=2024.0.0 # For Unicode regex support in NIST schemas
+black>=24.0.0 # Code formatting
+flake8>=7.0.0 # Style and PEP 8 linting
+mypy>=1.10.0 # Static type checking
+
