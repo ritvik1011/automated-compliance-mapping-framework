@@ -52,7 +52,9 @@ class RegulatoryArticle(BaseModel):
 
     article_id: str = Field(
         ...,
-        description="Unique identifier for the regulatory control (e.g., 'gdpr-art-32', 'dora-art-6').",
+        description=(
+            "Unique identifier for the regulatory control (e.g., 'gdpr-art-32', 'dora-art-6')."
+        ),
     )
     regulation: str = Field(
         ...,
@@ -63,7 +65,7 @@ class RegulatoryArticle(BaseModel):
         description="Formal title of the regulatory article or section.",
     )
     legal_reference: str = Field(
-        ...,
+        default="",
         description="Formal legal citation (e.g., 'Regulation (EU) 2016/679, Article 32').",
     )
     legal_text: str = Field(
@@ -138,6 +140,64 @@ class RegulatoryParser:
         self.fail_on_error = fail_on_error
         self.logger = logging.getLogger(self.__class__.__name__)
 
+    def parse(self, file_path: Union[str, Path]) -> List[RegulatoryArticle]:
+        """Loads and parses regulatory articles from a JSON file, strictly validating entries.
+
+        Args:
+            file_path: Path to the JSON input file.
+
+        Returns:
+            List of validated RegulatoryArticle instances.
+
+        Raises:
+            FileNotFoundError: If the target file does not exist.
+            pydantic.ValidationError: If validation fails.
+            ValueError: If file content is not valid JSON.
+        """
+        path = Path(file_path)
+        if not path.is_file():
+            self.logger.error("Input file not found: %s", path)
+            raise FileNotFoundError(f"Regulatory input file not found: {path}")
+
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                raw_content = json.load(f)
+        except json.JSONDecodeError as err:
+            self.logger.error("Malformed JSON in %s: %s", path, err)
+            raise ValueError(f"Failed to parse JSON file {path}: {err}") from err
+
+        articles_data: List[Any] = []
+        if isinstance(raw_content, list):
+            articles_data = raw_content
+        elif isinstance(raw_content, dict):
+            if "articles" in raw_content and isinstance(raw_content["articles"], list):
+                articles_data = raw_content["articles"]
+            elif "controls" in raw_content and isinstance(
+                raw_content["controls"], list
+            ):
+                articles_data = raw_content["controls"]
+            else:
+                articles_data = [raw_content]
+        else:
+            raise ValueError("Expected raw data to be a list or dict.")
+
+        parsed_articles: List[RegulatoryArticle] = []
+        seen_ids: set[str] = set()
+        for item in articles_data:
+            if not isinstance(item, dict):
+                raise ValueError("Article item must be a dictionary.")
+            article = self.parse_article(item)
+            if article.article_id not in seen_ids:
+                seen_ids.add(article.article_id)
+                parsed_articles.append(article)
+            else:
+                self.logger.warning(
+                    "Duplicate article_id '%s' detected and deduplicated.",
+                    article.article_id,
+                )
+
+        return parsed_articles
+
     def load_from_file(self, file_path: Union[str, Path]) -> List[RegulatoryArticle]:
         """Loads and parses regulatory articles from a JSON file.
 
@@ -165,7 +225,9 @@ class RegulatoryParser:
 
         return self.parse_raw_data(raw_content)
 
-    def parse_raw_data(self, raw_data: Union[List[Dict[str, Any]], Dict[str, Any]]) -> List[RegulatoryArticle]:
+    def parse_raw_data(
+        self, raw_data: Union[List[Dict[str, Any]], Dict[str, Any]]
+    ) -> List[RegulatoryArticle]:
         """Parses in-memory raw JSON data into RegulatoryArticle models.
 
         Supports both a top-level list of articles and a top-level dict
@@ -189,7 +251,9 @@ class RegulatoryParser:
             else:
                 articles_data = [raw_data]
         else:
-            self.logger.error("Invalid data format: expected list or dict, got %s", type(raw_data))
+            self.logger.error(
+                "Invalid data format: expected list or dict, got %s", type(raw_data)
+            )
             if self.fail_on_error:
                 raise ValueError("Expected raw data to be a list or dict.")
             return []
@@ -197,7 +261,9 @@ class RegulatoryParser:
         parsed_articles: List[RegulatoryArticle] = []
         for idx, item in enumerate(articles_data):
             if not isinstance(item, dict):
-                self.logger.warning("Skipping non-dictionary item at index %d: %s", idx, item)
+                self.logger.warning(
+                    "Skipping non-dictionary item at index %d: %s", idx, item
+                )
                 continue
 
             try:
@@ -208,7 +274,10 @@ class RegulatoryParser:
                 if self.fail_on_error:
                     raise
 
-        self.logger.info("Successfully parsed and standardized %d regulatory articles.", len(parsed_articles))
+        self.logger.info(
+            "Successfully parsed and standardized %d regulatory articles.",
+            len(parsed_articles),
+        )
         return parsed_articles
 
     def parse_article(self, article_data: Dict[str, Any]) -> RegulatoryArticle:

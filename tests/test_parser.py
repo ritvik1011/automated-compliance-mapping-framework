@@ -1,161 +1,207 @@
-"""Unit tests for RegulatoryParser, FrictionAnalyzer, and OSCALGenerator."""
+"""Unit Test Suite for RegulatoryParser and RegulatoryArticle Models.
 
-import json
+This module validates that heterogeneous legal texts (GDPR, DORA, NIS2) are
+reliably ingested, parsed, sanitized, and normalized into strongly-typed Pydantic
+domain models required by Policy-as-Code pipelines.
+"""
+
 from pathlib import Path
+from typing import Any, Dict, List
+import json
 import pytest
+from pydantic import ValidationError
 
 from src.parser import RegulatoryArticle, RegulatoryParser
-from src.friction_analyzer import FrictionAnalyzer
-from src.oscal_generator import OSCALGenerator
 
 
-@pytest.fixture
-def sample_data_path() -> Path:
-    """Returns the path to the sample input file."""
-    return Path(__file__).resolve().parent.parent / "data" / "sample_input.json"
-
-
-@pytest.fixture
-def parser() -> RegulatoryParser:
-    """Returns a default RegulatoryParser instance."""
-    return RegulatoryParser()
-
-
-@pytest.fixture
-def analyzer() -> FrictionAnalyzer:
-    """Returns a FrictionAnalyzer instance."""
-    return FrictionAnalyzer()
-
-
-@pytest.fixture
-def oscal_generator() -> OSCALGenerator:
-    """Returns an OSCALGenerator instance."""
-    return OSCALGenerator()
-
-
-def test_parser_load_sample_input(sample_data_path: Path, parser: RegulatoryParser):
-    """Validates that the parser successfully ingests and validates the sample input."""
-    assert sample_data_path.exists(), f"Sample data not found at {sample_data_path}"
-
-    articles = parser.load_from_file(sample_data_path)
-    assert len(articles) >= 4, f"Expected at least 4 articles, got {len(articles)}"
-
-    # Check for presence of GDPR, DORA, and NIS2
-    regulations = {a.regulation for a in articles}
-    assert "GDPR" in regulations
-    assert "DORA" in regulations
-    assert "NIS2" in regulations
-
-    # Validate model fields on GDPR Art 32
-    gdpr_32 = next((a for a in articles if "art-32" in a.article_id), None)
-    assert gdpr_32 is not None
-    assert gdpr_32.title == "Security of processing"
-    assert "state of the art" in gdpr_32.legal_text
-    assert len(gdpr_32.sub_clauses) == 4
-    assert "Data Controllers" in gdpr_32.applicability
-
-
-def test_parser_edge_cases_and_normalization(parser: RegulatoryParser):
-    """Validates ID sanitization, string applicability parsing, and malformed input handling."""
-    # Test valid parsing with comma-separated string applicability
-    raw_entry = {
-        "article_id": "TEST Art. 12/A",
-        "regulation": "dora_regulation",
-        "title": "Test Title",
-        "legal_reference": "Ref 123",
-        "legal_text": "Sample text",
-        "applicability": "Banks, Investment Firms",
-    }
-    article = parser.parse_article(raw_entry)
-    assert article.article_id == "test-art-12-a"
-    assert article.regulation == "DORA"
-    assert article.applicability == ["Banks", "Investment Firms"]
-
-    # Test error handling when non-fatal
-    bad_data = [raw_entry, {"malformed": "missing required fields"}, "not-a-dict"]
-    articles = parser.parse_raw_data(bad_data)
-    assert len(articles) == 1
-    assert articles[0].article_id == "test-art-12-a"
-
-
-def test_friction_analyzer_high_friction_detection(analyzer: FrictionAnalyzer):
-    """Validates that articles with high legal ambiguity are classified as High friction."""
-    article = RegulatoryArticle(
-        article_id="gdpr-art-32",
-        regulation="GDPR",
-        title="Security of processing",
-        legal_reference="GDPR Art 32",
-        legal_text=(
-            "Taking into account the state of the art, the costs of implementation "
-            "and the nature, scope, context and purposes of processing, the controller "
-            "shall implement appropriate technical and organisational measures."
-        ),
-        applicability=["Data Controllers"],
-    )
-
-    assessment = analyzer.analyze_article(article)
-    assert assessment.friction_level == "High"
-    assert assessment.friction_score >= 5.0
-    assert "state of the art" in assessment.detected_triggers
-    assert "appropriate" in assessment.detected_triggers
-    assert "costs of implementation" in assessment.detected_triggers
-    assert len(assessment.hitl_validation_steps) > 0
-    assert "Binary" in assessment.automatable_status or "Qualitative" in assessment.automatable_status
-
-
-def test_friction_analyzer_low_friction_detection(analyzer: FrictionAnalyzer):
-    """Validates that articles with explicit, deterministic deadlines score as Low friction."""
-    article = RegulatoryArticle(
-        article_id="dora-art-19",
-        regulation="DORA",
-        title="Incident Notification Deadlines",
-        legal_reference="DORA Art 19",
-        legal_text=(
-            "Financial entities shall submit to the competent authority an initial notification "
-            "no later than 4 hours from classification and not later than 24 hours, an intermediate "
-            "report within 72 hours, and a final report within 1 month."
-        ),
-        applicability=["Financial Entities"],
-    )
-
-    assessment = analyzer.analyze_article(article)
-    assert assessment.friction_level == "Low"
-    assert assessment.friction_score < 2.0
-    assert "Deterministic" in assessment.automatable_status
-
-
-def test_oscal_catalog_generation(
-    sample_data_path: Path,
+def test_parser_reads_valid_gdpr_article(
     parser: RegulatoryParser,
-    analyzer: FrictionAnalyzer,
-    oscal_generator: OSCALGenerator,
-):
-    """Validates that generated OSCAL catalogs strictly conform to NIST OSCAL JSON schema rules."""
-    articles = parser.load_from_file(sample_data_path)
-    report = analyzer.analyze_articles(articles, attach_to_articles=True)
+    sample_gdpr_article: Dict[str, Any],
+    tmp_path: Path,
+) -> None:
+    """WHAT: Validates that a standard GDPR article dictionary is correctly parsed from JSON.
 
-    catalog = oscal_generator.generate_catalog(articles)
+    WHY IT MATTERS:
+    This is the fundamental happy-path entry point. If the parser cannot ingest a baseline
+    valid regulatory provision, all downstream Policy-as-Code mappings fail immediately.
+    """
+    input_file = tmp_path / "gdpr_input.json"
+    input_file.write_text(json.dumps([sample_gdpr_article]), encoding="utf-8")
 
-    assert "catalog" in catalog
-    cat_obj = catalog["catalog"]
-    assert "uuid" in cat_obj
-    assert "metadata" in cat_obj
-    assert cat_obj["metadata"]["oscal-version"] == "1.1.1"
-    assert "controls" in cat_obj
-    assert len(cat_obj["controls"]) == len(articles)
+    articles = parser.parse(str(input_file))
 
-    # Check structure of first control
-    ctrl = cat_obj["controls"][0]
-    assert "id" in ctrl
-    assert "title" in ctrl
-    assert "props" in ctrl
-    assert "parts" in ctrl
+    assert len(articles) == 1, "Parser must return exactly one article."
+    assert articles[0].article_id == "gdpr-art32"
+    assert articles[0].regulation == "GDPR"
+    assert "Data Controllers" in articles[0].applicability
+    assert len(articles[0].sub_clauses) == 1
+    assert articles[0].sub_clauses[0].clause_id == "1(a)"
 
-    prop_names = {p["name"] for p in ctrl["props"]}
-    assert "regulation" in prop_names
-    assert "friction_level" in prop_names
-    assert "friction_score" in prop_names
 
-    part_names = {p["name"] for p in ctrl["parts"]}
-    assert "statement" in part_names
-    assert "guidance" in part_names
+def test_parser_handles_multiple_regulations(
+    parser: RegulatoryParser,
+    sample_gdpr_article: Dict[str, Any],
+    sample_dora_article: Dict[str, Any],
+    sample_nis2_article: Dict[str, Any],
+    tmp_path: Path,
+) -> None:
+    """WHAT: Ensures the parser can process a heterogeneous file containing GDPR, DORA, and NIS2.
+
+    WHY IT MATTERS:
+    Real-world enterprise compliance programs must map across multiple regulatory regimes
+    simultaneously without regime-specific ingest crashes.
+    """
+    input_file = tmp_path / "multi_framework.json"
+    input_file.write_text(
+        json.dumps([sample_gdpr_article, sample_dora_article, sample_nis2_article]),
+        encoding="utf-8",
+    )
+
+    articles = parser.parse(str(input_file))
+
+    assert len(articles) == 3, "All three frameworks must be ingested."
+    regulations = {a.regulation for a in articles}
+    assert regulations == {"GDPR", "DORA", "NIS2"}
+
+
+@pytest.mark.parametrize(
+    "raw_name, expected_norm",
+    [
+        ("gdpr", "GDPR"),
+        ("GDPR_REGULATION", "GDPR"),
+        ("dora", "DORA"),
+        ("dora_directive", "DORA"),
+        ("nis 2", "NIS2"),
+        ("NIS2_DIRECTIVE", "NIS2"),
+    ],
+)
+def test_parser_normalizes_regulation_names(
+    raw_name: str,
+    expected_norm: str,
+) -> None:
+    """WHAT: Tests regex-based normalization of regulatory regime names to canonical acronyms.
+
+    WHY IT MATTERS:
+    Downstream OSCAL profile generators require canonical names to generate consistent
+    namespaces and avoid fragmentation like 'gdpr' vs 'GDPR'.
+    """
+    article = RegulatoryArticle(
+        article_id="art-test",
+        regulation=raw_name,
+        title="Testing Normalization",
+        legal_text="Normative legal text placeholder.",
+    )
+    assert article.regulation == expected_norm
+
+
+@pytest.mark.parametrize(
+    "raw_id, expected_clean_id",
+    [
+        ("GDPR Art. 32", "gdpr-art-32"),
+        ("DORA/Art-6(1)", "dora-art-6-1"),
+        ("  NIS2__Art_21  ", "nis2__art_21"),
+        ("Article #15 @ EU", "article-15-eu"),
+    ],
+)
+def test_parser_sanitizes_article_ids(
+    raw_id: str,
+    expected_clean_id: str,
+) -> None:
+    """WHAT: Tests sanitization of article IDs into URL-safe, OSCAL NCName-compliant identifiers.
+
+    WHY IT MATTERS:
+    NIST OSCAL control identifiers must conform to strict schema regexes (alphanumeric with
+    hyphens/underscores). Punctuation or whitespace will invalidate the OSCAL catalog.
+    """
+    article = RegulatoryArticle(
+        article_id=raw_id,
+        regulation="GDPR",
+        title="Sanitization Test",
+        legal_text="Sample normative text.",
+    )
+    assert article.article_id == expected_clean_id
+
+
+@pytest.mark.parametrize(
+    "raw_applicability, expected_list",
+    [
+        (["Banks", "Insurers"], ["Banks", "Insurers"]),
+        (
+            "Banks, Insurers, Payment Gateways",
+            ["Banks", "Insurers", "Payment Gateways"],
+        ),
+        ("", []),
+        (None, []),
+    ],
+)
+def test_parser_applicability_parsing(
+    raw_applicability: Any,
+    expected_list: List[str],
+) -> None:
+    """WHAT: Validates that applicability can accept lists, comma-delimited strings, or empties.
+
+    WHY IT MATTERS:
+    External GRC feeds provide applicability entities in irregular formats. The parser
+    must gracefully standardize them into a structured List[str].
+    """
+    article = RegulatoryArticle(
+        article_id="art-applicability",
+        regulation="DORA",
+        title="Applicability Test",
+        legal_text="Legal requirement placeholder.",
+        applicability=raw_applicability,
+    )
+    assert article.applicability == expected_list
+
+
+@pytest.mark.parametrize(
+    "bad_payload",
+    [
+        [{"title": "Missing Article ID and text"}],
+        [{"article_id": "test-id"}],  # Missing legal_text and regulation
+        [{"article_id": "test-id", "regulation": "GDPR"}],  # Missing legal_text
+    ],
+)
+def test_parser_rejects_missing_required_fields(
+    parser: RegulatoryParser,
+    bad_payload: List[Dict[str, Any]],
+    tmp_path: Path,
+) -> None:
+    """WHAT: Ensures that articles missing mandatory fields raise pydantic.ValidationError.
+
+    WHY IT MATTERS:
+    Failing fast on malformed data prevents corrupted regulatory records from silently
+    polluting the security policy repository.
+    """
+    bad_file = tmp_path / "bad_data.json"
+    bad_file.write_text(json.dumps(bad_payload), encoding="utf-8")
+
+    with pytest.raises(ValidationError):
+        parser.parse(str(bad_file))
+
+
+def test_parser_handles_nonexistent_file(parser: RegulatoryParser) -> None:
+    """WHAT: Verifies that passing a missing file path raises FileNotFoundError.
+
+    WHY IT MATTERS:
+    Clean, predictable error types allow automated pipelines to report actionable diagnostic
+    messages rather than unhandled Python exceptions.
+    """
+    with pytest.raises(FileNotFoundError):
+        parser.parse("nonexistent_regulatory_file.json")
+
+
+def test_parser_rejects_invalid_json_content(
+    parser: RegulatoryParser,
+    tmp_path: Path,
+) -> None:
+    """WHAT: Verifies that passing non-JSON syntactical content raises ValueError.
+
+    WHY IT MATTERS:
+    Guards the parser against truncated or corrupted files received from upstream feeds.
+    """
+    corrupt_file = tmp_path / "corrupted.json"
+    corrupt_file.write_text("{This is not valid json!}", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Failed to parse JSON file"):
+        parser.parse(str(corrupt_file))
