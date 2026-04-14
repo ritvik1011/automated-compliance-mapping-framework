@@ -50,16 +50,32 @@ class OSCALGenerator:
         # Build OSCAL Properties
         props: List[Dict[str, str]] = [
             {"name": "regulation", "value": article.regulation, "ns": NS_EURLEX},
-            {"name": "legal_reference", "value": article.legal_reference, "ns": NS_EURLEX},
+            {
+                "name": "legal_reference",
+                "value": article.legal_reference,
+                "ns": NS_EURLEX,
+            },
             {
                 "name": "applicability",
-                "value": ", ".join(article.applicability) if article.applicability else "All In-Scope Entities",
+                "value": (
+                    ", ".join(article.applicability)
+                    if article.applicability
+                    else "All In-Scope Entities"
+                ),
                 "ns": NS_FRAMEWORK,
             },
         ]
 
         # Attach friction metadata properties if available
-        friction = article.friction_metadata or {}
+        friction = article.friction_metadata
+        if not friction:
+            try:
+                from src.friction_analyzer import FrictionAnalyzer
+
+                assessment = FrictionAnalyzer().analyze_article(article)
+                friction = assessment.model_dump()
+            except Exception:
+                friction = {}
         friction_level = friction.get("friction_level", "Unassessed")
         friction_score = str(friction.get("friction_score", 0.0))
         automatable_status = friction.get(
@@ -67,18 +83,26 @@ class OSCALGenerator:
         )
         detected_triggers = friction.get("detected_triggers", [])
 
-        props.extend([
-            {"name": "friction_level", "value": friction_level, "ns": NS_FRICTION},
-            {"name": "friction_score", "value": friction_score, "ns": NS_FRICTION},
-            {"name": "automatable_status", "value": automatable_status, "ns": NS_FRICTION},
-        ])
+        props.extend(
+            [
+                {"name": "friction_level", "value": friction_level, "ns": NS_FRICTION},
+                {"name": "friction_score", "value": friction_score, "ns": NS_FRICTION},
+                {
+                    "name": "automatable_status",
+                    "value": automatable_status,
+                    "ns": NS_FRICTION,
+                },
+            ]
+        )
 
         if detected_triggers:
-            props.append({
-                "name": "ambiguity_triggers",
-                "value": "; ".join(detected_triggers),
-                "ns": NS_FRICTION,
-            })
+            props.append(
+                {
+                    "name": "ambiguity_triggers",
+                    "value": "; ".join(detected_triggers),
+                    "ns": NS_FRICTION,
+                }
+            )
 
         # Build OSCAL Parts
         parts: List[Dict[str, Any]] = []
@@ -94,7 +118,12 @@ class OSCALGenerator:
         if article.sub_clauses:
             sub_parts: List[Dict[str, Any]] = []
             for sub in article.sub_clauses:
-                sub_id_clean = sub.clause_id.replace("(", "").replace(")", "").replace(" ", "-").lower()
+                sub_id_clean = (
+                    sub.clause_id.replace("(", "")
+                    .replace(")", "")
+                    .replace(" ", "-")
+                    .lower()
+                )
                 sub_part: Dict[str, Any] = {
                     "id": f"{control_id}-item-{sub_id_clean}",
                     "name": "item",
@@ -109,7 +138,9 @@ class OSCALGenerator:
         # 2. Socio-Technical Friction & HITL Guidance Part
         if friction:
             reason = friction.get("reason", "No friction rationale documented.")
-            recommendation = friction.get("recommendation", "No specific recommendation provided.")
+            recommendation = friction.get(
+                "recommendation", "No specific recommendation provided."
+            )
             hitl_steps = friction.get("hitl_validation_steps", [])
 
             guidance_prose_lines = [
@@ -119,7 +150,9 @@ class OSCALGenerator:
                 f"**Engineering Recommendation:** {recommendation}",
             ]
             if hitl_steps:
-                guidance_prose_lines.append("**Human-in-the-Loop (HITL) Validation Procedures:**")
+                guidance_prose_lines.append(
+                    "**Human-in-the-Loop (HITL) Validation Procedures:**"
+                )
                 for step in hitl_steps:
                     guidance_prose_lines.append(f"- {step}")
 
@@ -137,6 +170,26 @@ class OSCALGenerator:
             "props": props,
             "parts": parts,
         }
+
+    def generate(
+        self,
+        articles: List[RegulatoryArticle],
+        title: Optional[str] = None,
+        regulation_filter: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Generates an OSCAL catalog from articles (convenience alias for generate_catalog).
+
+        Args:
+            articles: List of RegulatoryArticle instances to include.
+            title: Optional catalog title.
+            regulation_filter: Optional regulation name to filter by.
+
+        Returns:
+            Dictionary strictly following the OSCAL Catalog schema.
+        """
+        return self.generate_catalog(
+            articles=articles, title=title, regulation_filter=regulation_filter
+        )
 
     def generate_catalog(
         self,
@@ -157,7 +210,9 @@ class OSCALGenerator:
         filtered_articles = articles
         if regulation_filter:
             norm_filter = regulation_filter.strip().upper()
-            filtered_articles = [a for a in articles if a.regulation.upper() == norm_filter]
+            filtered_articles = [
+                a for a in articles if a.regulation.upper() == norm_filter
+            ]
 
         catalog_title = title or (
             f"{regulation_filter.upper()} Regulatory Catalog"
@@ -184,7 +239,13 @@ class OSCALGenerator:
                     ),
                 },
                 "controls": controls,
-            }
+            },
+            "metadata": {
+                "title": catalog_title,
+                "last-modified": timestamp,
+                "version": "1.0.0",
+                "oscal-version": self.oscal_version,
+            },
         }
 
         self.logger.info(
@@ -235,7 +296,12 @@ class OSCALGenerator:
         """
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
+        export_payload = (
+            {"catalog": catalog_data["catalog"]}
+            if "catalog" in catalog_data
+            else catalog_data
+        )
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(catalog_data, f, indent=2, ensure_ascii=False)
+            json.dump(export_payload, f, indent=2, ensure_ascii=False)
         self.logger.info("Saved OSCAL catalog to %s", path)
         return path
