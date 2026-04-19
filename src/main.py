@@ -31,14 +31,14 @@ if sys.platform == "win32":
         except Exception:
             pass
 
-from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
-from rich.text import Text
+from rich.console import Console  # noqa: E402
+from rich.panel import Panel  # noqa: E402
+from rich.table import Table  # noqa: E402
+from rich.text import Text  # noqa: E402
 
-from src.friction_analyzer import FrictionAnalyzer, FrictionReport
-from src.oscal_generator import OSCALGenerator
-from src.parser import RegulatoryArticle, RegulatoryParser
+from src.friction_analyzer import FrictionAnalyzer, FrictionReport  # noqa: E402
+from src.oscal_generator import OSCALGenerator  # noqa: E402
+from src.parser import RegulatoryArticle, RegulatoryParser  # noqa: E402
 
 logger = logging.getLogger("compliance_pipeline")
 
@@ -53,7 +53,9 @@ def setup_logging(verbose: bool = False) -> None:
     )
 
 
-def print_rich_summary(console: Console, report: FrictionReport, articles: List[RegulatoryArticle]) -> None:
+def print_rich_summary(
+    console: Console, report: FrictionReport, articles: List[RegulatoryArticle]
+) -> None:
     """Renders an executive terminal report using the Rich library.
 
     Args:
@@ -71,11 +73,21 @@ def print_rich_summary(console: Console, report: FrictionReport, articles: List[
     console.print(Panel(banner, border_style="cyan", padding=(1, 2)))
 
     # Metrics Summary Table
-    metrics_table = Table(title="Pipeline Ingestion & Friction Metrics", border_style="blue")
-    metrics_table.add_column("Total Ingested Articles", justify="center", style="bold white")
-    metrics_table.add_column("High Friction (Non-Binary)", justify="center", style="bold red")
-    metrics_table.add_column("Medium Friction (Hybrid HITL)", justify="center", style="bold yellow")
-    metrics_table.add_column("Low Friction (Fully Automatable)", justify="center", style="bold green")
+    metrics_table = Table(
+        title="Pipeline Ingestion & Friction Metrics", border_style="blue"
+    )
+    metrics_table.add_column(
+        "Total Ingested Articles", justify="center", style="bold white"
+    )
+    metrics_table.add_column(
+        "High Friction (Non-Binary)", justify="center", style="bold red"
+    )
+    metrics_table.add_column(
+        "Medium Friction (Hybrid HITL)", justify="center", style="bold yellow"
+    )
+    metrics_table.add_column(
+        "Low Friction (Fully Automatable)", justify="center", style="bold green"
+    )
 
     metrics_table.add_row(
         str(report.total_articles),
@@ -111,7 +123,11 @@ def print_rich_summary(console: Console, report: FrictionReport, articles: List[
             level_badge = "[bold green]LOW[/bold green]"
             score_str = f"[bold green]{assessment.friction_score:.1f}[/bold green]"
 
-        triggers_str = ", ".join(assessment.detected_triggers) if assessment.detected_triggers else "None (Deterministic)"
+        triggers_str = (
+            ", ".join(assessment.detected_triggers)
+            if assessment.detected_triggers
+            else "None (Deterministic)"
+        )
 
         controls_table.add_row(
             assessment.article_id,
@@ -129,15 +145,20 @@ def print_rich_summary(console: Console, report: FrictionReport, articles: List[
     # Callout panels for High Friction controls
     high_friction_items = [a for a in report.assessments if a.friction_level == "High"]
     if high_friction_items:
-        console.print("[bold red][!] Critical Socio-Technical Friction Points Detected (Deep Dive):[/bold red]")
+        console.print(
+            "[bold red][!] Critical Socio-Technical Friction Points "
+            "Detected (Deep Dive):[/bold red]"
+        )
         for item in high_friction_items:
+            triggers_str = ", ".join(item.detected_triggers)
             panel_content = (
-                f"[bold cyan]Legal Reference:[/bold cyan] {item.article_id.upper()} ({item.regulation})\n"
-                f"[bold yellow]Ambiguous Legal Triggers:[/bold yellow] {', '.join(item.detected_triggers)}\n\n"
-                f"[bold underline]Why Binary Automation Fails (Research Rationale):[/bold underline]\n"
-                f"{item.reason}\n\n"
-                f"[bold underline]Human-in-the-Loop (HITL) Engineering Recommendation:[/bold underline]\n"
-                f"{item.recommendation}\n\n"
+                f"[bold cyan]Legal Reference:[/bold cyan] {item.article_id.upper()} "
+                f"({item.regulation})\n"
+                f"[bold yellow]Ambiguous Legal Triggers:[/bold yellow] {triggers_str}\n\n"
+                "[bold underline]Why Binary Automation Fails (Research Rationale):"
+                f"[/bold underline]\n{item.reason}\n\n"
+                "[bold underline]Human-in-the-Loop (HITL) Engineering "
+                f"Recommendation:[/bold underline]\n{item.recommendation}\n\n"
                 f"[bold]Recommended Verification Procedures:[/bold]\n"
                 + "\n".join(f"  * {step}" for step in item.hitl_validation_steps)
             )
@@ -172,21 +193,29 @@ def run_pipeline(
     console = Console()
     setup_logging(verbose)
 
-    console.print(f"[bold cyan][>] Ingesting regulatory articles from:[/bold cyan] {input_file}")
+    console.print(
+        f"[bold cyan][>] Ingesting regulatory articles from:[/bold cyan] {input_file}"
+    )
     parser = RegulatoryParser(fail_on_error=False)
     articles = parser.load_from_file(input_file)
 
     if regulation_filter:
         norm_filter = regulation_filter.strip().upper()
         articles = [a for a in articles if a.regulation.upper() == norm_filter]
-        console.print(f"[yellow]Filtered for regulation:[/yellow] {norm_filter} ({len(articles)} articles remaining)")
+        console.print(
+            f"[yellow]Filtered for regulation:[/yellow] {norm_filter} "
+            f"({len(articles)} articles remaining)"
+        )
 
     if not articles:
         console.print("[bold red]Error:[/bold red] No valid articles found to process.")
         return 1
 
     # Step 2: Socio-Technical Friction Analysis
-    console.print("[bold cyan][>] Analyzing socio-technical friction points and legal ambiguity...[/bold cyan]")
+    console.print(
+        "[bold cyan][>] Analyzing socio-technical friction points and "
+        "legal ambiguity...[/bold cyan]"
+    )
     analyzer = FrictionAnalyzer()
     friction_report = analyzer.analyze_articles(articles, attach_to_articles=True)
 
@@ -217,11 +246,13 @@ def run_pipeline(
     print_rich_summary(console, friction_report, articles)
 
     # Output Artifact Summary
-    console.print(f"[bold green][OK] Pipeline executed successfully![/bold green]")
+    console.print("[bold green][OK] Pipeline executed successfully![/bold green]")
     console.print(f"[bold white]Generated Artifacts in '{output_dir}':[/bold white]")
     for cat_path in saved_catalogs:
         console.print(f"  * OSCAL Catalog: [green]{cat_path}[/green]")
-    console.print(f"  * Socio-Technical Friction Report: [green]{friction_report_path}[/green]\n")
+    console.print(
+        f"  * Socio-Technical Friction Report: [green]{friction_report_path}[/green]\n"
+    )
 
     return 0
 
@@ -245,6 +276,7 @@ def main() -> None:
     )
     arg_parser.add_argument(
         "--output-dir",
+        "--output",
         "-o",
         type=Path,
         default=default_output,
