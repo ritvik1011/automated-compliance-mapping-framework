@@ -55,39 +55,104 @@ This research initiative follows an agile, sprint-based engineering lifecycle de
 │   ├── unified_catalog.json   # Multi-regulation OSCAL catalog
 │   └── friction_report.json   # Detailed socio-technical friction analysis report
 ├── tests/
-│   └── test_parser.py         # Pytest suite for parser, analyzer, and OSCAL generator
-├── requirements.txt           # Python dependencies
+│   ├── __init__.py            # Test package marker
+│   ├── test_parser.py         # Regulatory parser test suite
+│   ├── test_friction_analyzer.py # Socio-technical friction analysis tests
+│   ├── test_oscal_generator.py # OSCAL generation and control mapping tests
+│   ├── test_oscal_validation.py # Official NIST schema validation tests
+│   ├── test_edge_cases.py     # Extreme inputs, Unicode, and empty file tests
+│   └── test_integration.py    # Multi-regulation end-to-end pipeline tests
+├── oscal_catalog_schema.json  # Official NIST OSCAL v1.1.1 JSON schema
+├── requirements.txt           # Python dependencies and development tools
 └── README.md
 ```
 
 ## 🚀 Quickstart & Pipeline Execution
 
-### 1. Install Dependencies
+### 1. Setup Virtual Environment
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# macOS / Linux:
+source venv/bin/activate
+# Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# Windows (Command Prompt):
+venv\Scripts\activate.bat
+```
+
+### 2. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run the Full Ingestion & Friction Analysis Pipeline
+### 3. Download the NIST OSCAL Catalog Schema
+Download the official NIST OSCAL schema (v1.1.1) for control catalog validation:
+```bash
+# macOS / Linux / Windows:
+curl -L -o oscal_catalog_schema.json https://github.com/usnistgov/OSCAL/releases/download/v1.1.1/oscal_catalog_schema.json
+```
+
+### 4. Run the Full Ingestion & Friction Analysis Pipeline
 Execute the pipeline orchestrator:
 ```bash
+python -m src.main --input data/sample_input.json --output oscal_profiles/
+# or
 python src/main.py
 ```
 
 Optional CLI parameters:
 ```bash
 # Filter for a specific regulation (GDPR, DORA, or NIS2)
-python src/main.py --regulation GDPR
+python -m src.main --regulation GDPR
 
 # Specify custom input and output paths
-python src/main.py --input data/sample_input.json --output-dir oscal_profiles/
+python -m src.main --input data/sample_input.json --output-dir oscal_profiles/
 
 # Enable verbose debug logging
-python src/main.py --verbose
+python -m src.main --verbose
 ```
 
-### 3. Run Unit Tests
+## 🧪 Testing Suite & Validation
+
+### Run Full Test Suite
 ```bash
-python -m pytest tests/test_parser.py -v
+pytest -v
+```
+
+### Run NIST OSCAL Schema Validation
+Validates that generated catalogs strictly conform to the official NIST OSCAL Control Catalog standard:
+```bash
+pytest tests/test_oscal_validation.py -v -s
+```
+
+### Run Code Coverage Analysis
+```bash
+# Generate terminal and HTML reports
+pytest --cov=src --cov-report=term-missing --cov-report=html
+
+# View HTML coverage report in browser:
+# Windows:
+start htmlcov/index.html
+# macOS:
+open htmlcov/index.html
+# Linux:
+xdg-open htmlcov/index.html
+```
+
+## 🧹 Code Quality & Static Analysis
+
+```bash
+# 1. Black: Auto-format code
+black src/ tests/
+
+# 2. Flake8: Style & PEP 8 validation
+flake8 src/ tests/ --max-line-length=100
+
+# 3. Mypy: Strict static type checking
+mypy src/
 ```
 
 ## 🧠 Socio-Technical Friction Research Alignment
