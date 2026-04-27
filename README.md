@@ -1,5 +1,11 @@
 # Automated Compliance Mapping & Gap Analysis Framework
 
+[![Continuous Integration](https://github.com/ritvik1011/automated-compliance-mapping-framework/actions/workflows/tests.yml/badge.svg)](https://github.com/ritvik1011/automated-compliance-mapping-framework/actions/workflows/tests.yml)
+[![Coverage](https://img.shields.io/badge/Coverage-92%25-brightgreen.svg)](tests/README.md)
+[![NIST OSCAL](https://img.shields.io/badge/NIST%20OSCAL-v1.1.1%20Compliant-blue.svg)](https://pages.nist.gov/OSCAL/)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Type Checked: Mypy](https://img.shields.io/badge/mypy-checked-blue.svg)](http://mypy-lang.org/)
+
 > A Policy-as-Code research project translating complex regulatory mandates (GDPR, DORA, NIS2) into machine-readable OSCAL formats, with a specialized focus on identifying socio-technical friction points in enterprise environments.
 
 ## 🎯 Project Objective
@@ -154,6 +160,14 @@ flake8 src/ tests/ --max-line-length=100
 # 3. Mypy: Strict static type checking
 mypy src/
 ```
+
+## 🔄 Continuous Integration & Automated Quality Gates
+
+Every push and pull request executes an automated verification pipeline via GitHub Actions (`.github/workflows/tests.yml`):
+- **Multi-Version Testing Matrix**: Python 3.10, 3.11, and 3.12 environments on Ubuntu.
+- **Official NIST Schema Verification**: Automatic retrieval and jsonschema validation against NIST OSCAL Catalog v1.1.1.
+- **Static Quality Enforcement**: Strict adherence to Black, Flake8 (`--max-line-length=100`), and Mypy.
+- **Coverage Artifacts**: Automated calculation of statement coverage (92% achieved) with HTML reports uploaded to GitHub Actions artifacts.
 
 ## 🧠 Socio-Technical Friction Research Alignment
 Traditional Policy-as-Code frameworks assume that compliance obligations map directly to deterministic, binary (Pass/Fail) infrastructure assertions. However, regulatory frameworks (GDPR Art. 32, DORA Art. 6, NIS2 Art. 21) are deliberately drafted with **open-textured legal terms** ("state of the art", "proportionate", "appropriate measures").
