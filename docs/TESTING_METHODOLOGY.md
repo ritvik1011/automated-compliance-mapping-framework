@@ -1,7 +1,7 @@
 # Empirical Testing & Verification Methodology
 
 **Project:** Automated Compliance Mapping & Gap Analysis Framework  
-**Author:** Ritvik Nitin Barit  
+**Author:** Ritvik Bahirwar  
 **Affiliation:** Max Planck Institute for Security and Privacy (MPI-SP) Application Portfolio  
 **Phase:** Phase 1 Milestone — Testing, Verification & Hardening (April 2026)
 
