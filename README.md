@@ -35,7 +35,16 @@ This research initiative follows an agile, sprint-based engineering lifecycle de
 - **March 15, 2026**: **NIST OSCAL Catalog Generator** — Engineered `OSCALGenerator` mapping regulatory provisions into standardized OSCAL Catalog JSON models (v1.1.1).
 - **March 22, 2026**: **Socio-Technical Friction Analysis Engine** — Built `FrictionAnalyzer` to detect legal indeterminacy and open-textured terms, scoring automation feasibility and generating HITL recommendations.
 - **March 27, 2026**: **Pipeline Orchestration & Rich CLI** — Developed `main.py` orchestrator with multi-regulation filtering, rich terminal visualizations, and artifact persistence.
-- **March 31, 2026**: **Verification, Hardening & Phase 1 Release** — Delivered unit test suite (`tests/test_parser.py`), edge-case normalization, comprehensive documentation, and final Phase 1 catalog artifacts.
+- **March 31, 2026**: **Ingestion Baseline & Phase 1 Release** — Delivered baseline regulatory models, edge-case normalization, and foundational Phase 1 catalog artifacts.
+
+### Testing & Quality Assurance Sprint Milestones (April 2026)
+- **April 3, 2026**: **Test Infrastructure & Shared Fixtures Harness** — Engineered `tests/conftest.py` with multi-scope fixtures, configured `pytest.ini`, and established baseline testing documentation.
+- **April 8, 2026**: **Core Unit Verification** — Built comprehensive unit test suites across `RegulatoryParser` and `FrictionAnalyzer`, verifying Pydantic schema validation and open-textured ambiguity heuristics.
+- **April 14, 2026**: **NIST OSCAL Conformance & Schema Validation** — Integrated official NIST OSCAL Control Catalog JSON Schema (v1.1.1) and built dynamic `jsonschema` regex engine testing.
+- **April 19, 2026**: **End-to-End Integration & Boundary Fuzzing** — Engineered multi-regulation pipeline orchestrator tests and adversarial edge-case suites (multilingual Unicode, emojis, 60k ReDoS resistance).
+- **April 23, 2026**: **Quality Hardening & Coverage Telemetry** — Enforced Black formatting, Flake8 PEP 8 adherence, and Mypy static typing, achieving 92% statement coverage.
+- **April 27, 2026**: **CI/CD Quality Gates** — Established automated GitHub Actions workflow (`.github/workflows/tests.yml`) running multi-version matrix tests and coverage artifact uploads.
+- **April 30, 2026**: **Empirical Methodology Sign-Off** — Published comprehensive research validation methodology in [`docs/TESTING_METHODOLOGY.md`](docs/TESTING_METHODOLOGY.md) and [`tests/README.md`](tests/README.md).
 
 ## 🛠️ Tech Stack
 - **Core Language**: Python 3.10+
@@ -122,6 +131,8 @@ python -m src.main --verbose
 ```
 
 ## 🧪 Testing Suite & Validation
+
+> For an in-depth empirical explanation of our four-tiered verification pyramid and research rigor, consult [`docs/TESTING_METHODOLOGY.md`](docs/TESTING_METHODOLOGY.md) and [`tests/README.md`](tests/README.md).
 
 ### Run Full Test Suite
 ```bash
