@@ -1,11 +1,32 @@
+# Core dependencies (from Step 1)
 pydantic>=2.0.0
 pyyaml>=6.0
-rich>=13.0.0  # For beautiful terminal output of friction reports
-pytest>=7.0.0 # For testing
-pytest-cov>=4.0.0 # For code coverage reporting
-jsonschema>=4.20.0 # For OSCAL schema validation
-regex>=2024.0.0 # For Unicode regex support in NIST schemas
-black>=24.0.0 # Code formatting
-flake8>=7.0.0 # Style and PEP 8 linting
-mypy>=1.10.0 # Static type checking
+rich>=13.0.0
 
+# 🆕 NEW - Cloud SDKs
+azure-identity>=1.15.0          # Azure authentication
+azure-mgmt-resource>=23.0.0     # Azure Resource Manager
+azure-mgmt-subscription>=3.0.0 # Azure Subscriptions
+azure-mgmt-storage>=21.0.0      # Azure Storage accounts
+azure-mgmt-network>=25.0.0      # Azure networking
+azure-mgmt-compute>=30.0.0      # Azure VMs
+azure-mgmt-keyvault>=10.0.0     # Azure Key Vault
+azure-mgmt-rdbms>=10.0.0        # Azure databases
+azure-mgmt-monitor>=6.0.0       # Azure monitoring (backups)
+boto3>=1.34.0                   # AWS SDK
+
+# 🆕 NEW - Testing & Mocking
+pytest>=7.0.0
+pytest-cov>=4.0.0
+moto>=5.0.0                     # Mock AWS services
+azure-mgmt-core                 # Azure core utilities
+
+# 🆕 NEW - OSCAL & Schema Validation
+# compliance-oscal>=0.1.0       # OSCAL Python library (if available)
+jsonschema>=4.20.0              # OSCAL schema validation
+regex>=2024.0.0                 # For Unicode regex support in NIST schemas
+
+# Code Quality & Development
+black>=24.0.0
+flake8>=7.0.0
+mypy>=1.10.0
