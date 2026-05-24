@@ -1,0 +1,90 @@
+{
+  "storage_accounts": [
+    {
+      "id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage1",
+      "name": "teststorage1",
+      "location": "westeurope",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_GRS"
+      },
+      "enable_https_traffic_only": true,
+      "encryption": {
+        "services": {
+          "blob": {
+            "enabled": true
+          },
+          "file": {
+            "enabled": true
+          }
+        },
+        "key_source": "Microsoft.Storage",
+        "require_infrastructure_encryption": true
+      }
+    },
+    {
+      "id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "name": "teststorage2",
+      "location": "westeurope",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "enable_https_traffic_only": false,
+      "encryption": {
+        "services": {
+          "blob": {
+            "enabled": true
+          },
+          "file": {
+            "enabled": false
+          }
+        },
+        "key_source": "Microsoft.Storage",
+        "require_infrastructure_encryption": false
+      }
+    }
+  ],
+  "virtual_machines": [
+    {
+      "id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Compute/virtualMachines/testvm1",
+      "name": "testvm1",
+      "location": "westeurope",
+      "identity": {
+        "type": "SystemAssigned",
+        "principal_id": "12345678-1234-1234-1234-123456789012"
+      }
+    }
+  ],
+  "network_security_groups": [
+    {
+      "id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+      "name": "nsg-test",
+      "location": "westeurope",
+      "security_rules": [
+        {
+          "name": "AllowHTTP",
+          "access": "Allow",
+          "direction": "Inbound",
+          "protocol": "TCP",
+          "source_address_prefix": "*",
+          "destination_port_range": "80"
+        }
+      ]
+    }
+  ],
+  "key_vaults": [
+    {
+      "id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.KeyVault/vaults/testkv1",
+      "name": "testkv1",
+      "location": "westeurope",
+      "properties": {
+        "enable_soft_delete": true,
+        "enable_purge_protection": true,
+        "sku": {
+          "name": "standard"
+        }
+      }
+    }
+  ]
+}

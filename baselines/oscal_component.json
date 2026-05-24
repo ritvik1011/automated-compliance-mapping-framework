@@ -1,0 +1,444 @@
+{
+  "component-definition": {
+    "uuid": "a42b7d71-e9d6-4762-a85d-00b8c05c3c8e",
+    "metadata": {
+      "title": "Technical Baseline - AZURE",
+      "last-modified": "2026-10-25T10:05:31.424070+00:00",
+      "version": "1.0.0",
+      "oscal-version": "1.1.2",
+      "roles": [
+        {
+          "id": "asset-owner",
+          "title": "Asset Owner"
+        },
+        {
+          "id": "provider",
+          "title": "Cloud Service Provider"
+        }
+      ],
+      "parties": [
+        {
+          "uuid": "77aabf1d-0b53-409c-909f-269af70f4292",
+          "type": "organization",
+          "name": "AZURE Environment"
+        }
+      ],
+      "responsible-parties": [
+        {
+          "role-id": "asset-owner",
+          "party-uuids": [
+            "0742592a-ea37-4bd4-b7d5-7577212a9c33"
+          ]
+        }
+      ]
+    },
+    "components": [
+      {
+        "uuid": "ab4bb6fe-ff42-4538-a63c-b02d62b43d8d",
+        "type": "service",
+        "title": "testvm1",
+        "description": "VirtualMachine resource in AZURE",
+        "purpose": "Technical component implementing security controls for VirtualMachine",
+        "props": [
+          {
+            "name": "resource-id",
+            "value": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Compute/virtualMachines/testvm1"
+          },
+          {
+            "name": "cloud-provider",
+            "value": "azure"
+          },
+          {
+            "name": "resource-type",
+            "value": "VirtualMachine"
+          },
+          {
+            "name": "compliance-status",
+            "value": "compliant"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "6d1100e0-ab4b-4fc8-991e-db71407b9955",
+            "source": "#identity_access_management",
+            "description": "Implementation of identity_access_management controls",
+            "implemented-requirements": [
+              {
+                "uuid": "ad7af379-23e7-4f31-9bd4-c7ba740448a4",
+                "control-id": "azure-vm-managed-identity-testvm1",
+                "description": "VM has managed identity configured",
+                "props": [
+                  {
+                    "name": "compliance-status",
+                    "value": "compliant"
+                  },
+                  {
+                    "name": "evidence-timestamp",
+                    "value": "2026-10-25T10:05:31.391877+00:00"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "azure-vm-managed-identity-testvm1_statement",
+                    "uuid": "af69f798-42d8-4039-b576-cc1073a12cfc",
+                    "description": "Current state: {\"identity_type\": \"SystemAssigned\", \"principal_id\": \"12345678-1234-1234-1234-123456789012\"}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uuid": "cae9f7d0-6003-4f80-a597-de1dcd27459f",
+        "type": "service",
+        "title": "teststorage1",
+        "description": "StorageAccount resource in AZURE",
+        "purpose": "Technical component implementing security controls for StorageAccount",
+        "props": [
+          {
+            "name": "resource-id",
+            "value": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage1"
+          },
+          {
+            "name": "cloud-provider",
+            "value": "azure"
+          },
+          {
+            "name": "resource-type",
+            "value": "StorageAccount"
+          },
+          {
+            "name": "compliance-status",
+            "value": "compliant"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "7507768a-534f-4383-9ea4-e99ba6d06bed",
+            "source": "#data_encryption",
+            "description": "Implementation of data_encryption controls",
+            "implemented-requirements": [
+              {
+                "uuid": "36c279a6-8000-400f-82eb-83ce3f79c49c",
+                "control-id": "azure-storage-encryption-teststorage1",
+                "description": "Storage account encryption at rest status",
+                "props": [
+                  {
+                    "name": "compliance-status",
+                    "value": "compliant"
+                  },
+                  {
+                    "name": "evidence-timestamp",
+                    "value": "2026-10-25T10:05:31.393001+00:00"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "azure-storage-encryption-teststorage1_statement",
+                    "uuid": "c76be70c-572f-4737-99f9-ab6b13d38a1c",
+                    "description": "Current state: {\"encryption_services\": {\"blob\": true, \"file\": true}, \"encryption_key_source\": \"Microsoft.Storage\", \"require_infrastructure_encryption\": true}"
+                  }
+                ]
+              },
+              {
+                "uuid": "30e52ef7-d0d8-4a55-8e9c-6c14fe41000f",
+                "control-id": "azure-storage-https-teststorage1",
+                "description": "Storage account enforces HTTPS-only traffic",
+                "props": [
+                  {
+                    "name": "compliance-status",
+                    "value": "compliant"
+                  },
+                  {
+                    "name": "evidence-timestamp",
+                    "value": "2026-10-25T10:05:31.393037+00:00"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "azure-storage-https-teststorage1_statement",
+                    "uuid": "6ca954dd-f300-4ed0-b015-f7975a0b4990",
+                    "description": "Current state: {\"https_only\": true}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "2a21f3c5-e3f2-4a41-a091-d82ed465500d",
+            "source": "#backup_recovery",
+            "description": "Implementation of backup_recovery controls",
+            "implemented-requirements": [
+              {
+                "uuid": "6f1976ec-dc5c-46d1-9906-40c0db15eada",
+                "control-id": "azure-storage-redundancy-teststorage1",
+                "description": "Storage account redundancy/backup configuration",
+                "props": [
+                  {
+                    "name": "compliance-status",
+                    "value": "compliant"
+                  },
+                  {
+                    "name": "evidence-timestamp",
+                    "value": "2026-10-25T10:05:31.394195+00:00"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "azure-storage-redundancy-teststorage1_statement",
+                    "uuid": "1f79bbe2-ddd8-49cc-b7b7-6306e4208692",
+                    "description": "Current state: {\"sku\": \"Standard_GRS\", \"redundancy_level\": \"Geo-Redundant (cross-region backup)\", \"is_geo_redundant\": true}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uuid": "7e50169a-3a51-4b5b-9101-c32d352e7e73",
+        "type": "service",
+        "title": "teststorage2",
+        "description": "StorageAccount resource in AZURE",
+        "purpose": "Technical component implementing security controls for StorageAccount",
+        "props": [
+          {
+            "name": "resource-id",
+            "value": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2"
+          },
+          {
+            "name": "cloud-provider",
+            "value": "azure"
+          },
+          {
+            "name": "resource-type",
+            "value": "StorageAccount"
+          },
+          {
+            "name": "compliance-status",
+            "value": "non-compliant"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "54193e11-d522-4f58-a820-5bc856d528e6",
+            "source": "#data_encryption",
+            "description": "Implementation of data_encryption controls",
+            "implemented-requirements": [
+              {
+                "uuid": "ab07e5f9-b5f4-4d88-b811-909325069dc4",
+                "control-id": "azure-storage-encryption-teststorage2",
+                "description": "Storage account encryption at rest status",
+                "props": [
+                  {
+                    "name": "compliance-status",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "evidence-timestamp",
+                    "value": "2026-10-25T10:05:31.393326+00:00"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "azure-storage-encryption-teststorage2_statement",
+                    "uuid": "db1edf92-9150-4014-9176-111a7a4f525b",
+                    "description": "Current state: {\"encryption_services\": {\"blob\": true, \"file\": false}, \"encryption_key_source\": \"Microsoft.Storage\", \"require_infrastructure_encryption\": false}"
+                  }
+                ]
+              },
+              {
+                "uuid": "cb2e3d24-a718-4791-a0a6-882cf7c8f7cf",
+                "control-id": "azure-storage-https-teststorage2",
+                "description": "Storage account enforces HTTPS-only traffic",
+                "props": [
+                  {
+                    "name": "compliance-status",
+                    "value": "non_compliant"
+                  },
+                  {
+                    "name": "evidence-timestamp",
+                    "value": "2026-10-25T10:05:31.393355+00:00"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "azure-storage-https-teststorage2_statement",
+                    "uuid": "8242f252-18ff-4bb4-bb0a-6c69bf9cd0f1",
+                    "description": "Current state: {\"https_only\": false}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "f8036bb5-bc77-4b3b-bce2-b708871d8901",
+            "source": "#backup_recovery",
+            "description": "Implementation of backup_recovery controls",
+            "implemented-requirements": [
+              {
+                "uuid": "18799e7b-0ba5-4c1b-bd15-94f3dcdcfe86",
+                "control-id": "azure-storage-redundancy-teststorage2",
+                "description": "Storage account redundancy/backup configuration",
+                "props": [
+                  {
+                    "name": "compliance-status",
+                    "value": "non_compliant"
+                  },
+                  {
+                    "name": "evidence-timestamp",
+                    "value": "2026-10-25T10:05:31.394232+00:00"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "azure-storage-redundancy-teststorage2_statement",
+                    "uuid": "3e060d35-107f-4c78-89b3-bc867e20e79b",
+                    "description": "Current state: {\"sku\": \"Standard_LRS\", \"redundancy_level\": \"Locally Redundant (lowest resilience)\", \"is_geo_redundant\": false}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uuid": "2c94b033-71ec-41a9-b563-5aae9e6d7aa1",
+        "type": "service",
+        "title": "testkv1",
+        "description": "KeyVault resource in AZURE",
+        "purpose": "Technical component implementing security controls for KeyVault",
+        "props": [
+          {
+            "name": "resource-id",
+            "value": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.KeyVault/vaults/testkv1"
+          },
+          {
+            "name": "cloud-provider",
+            "value": "azure"
+          },
+          {
+            "name": "resource-type",
+            "value": "KeyVault"
+          },
+          {
+            "name": "compliance-status",
+            "value": "compliant"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "a0a752f6-17b9-4d3e-bbb2-2a9586774ae4",
+            "source": "#data_encryption",
+            "description": "Implementation of data_encryption controls",
+            "implemented-requirements": [
+              {
+                "uuid": "9209737b-e3f0-4ac1-8261-10895ac4566b",
+                "control-id": "azure-keyvault-protection-testkv1",
+                "description": "Key Vault protection settings (soft-delete, purge protection)",
+                "props": [
+                  {
+                    "name": "compliance-status",
+                    "value": "compliant"
+                  },
+                  {
+                    "name": "evidence-timestamp",
+                    "value": "2026-10-25T10:05:31.393400+00:00"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "azure-keyvault-protection-testkv1_statement",
+                    "uuid": "7234feff-001f-4f52-b1ee-ce6fdef69896",
+                    "description": "Current state: {\"soft_delete_enabled\": true, \"purge_protection_enabled\": true, \"sku\": \"standard\"}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uuid": "3db7c612-5906-4582-9019-c1cff6c10b73",
+        "type": "network",
+        "title": "nsg-test",
+        "description": "NetworkSecurityGroup resource in AZURE",
+        "purpose": "Technical component implementing security controls for NetworkSecurityGroup",
+        "props": [
+          {
+            "name": "resource-id",
+            "value": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test"
+          },
+          {
+            "name": "cloud-provider",
+            "value": "azure"
+          },
+          {
+            "name": "resource-type",
+            "value": "NetworkSecurityGroup"
+          },
+          {
+            "name": "compliance-status",
+            "value": "non-compliant"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "2821753a-3225-428c-81cd-0c767003a820",
+            "source": "#network_security",
+            "description": "Implementation of network_security controls",
+            "implemented-requirements": [
+              {
+                "uuid": "69cdb7c5-83f2-4e48-a172-b693df0a343b",
+                "control-id": "azure-nsg-nsg-test",
+                "description": "Network Security Group rule analysis",
+                "props": [
+                  {
+                    "name": "compliance-status",
+                    "value": "non_compliant"
+                  },
+                  {
+                    "name": "evidence-timestamp",
+                    "value": "2026-10-25T10:05:31.393842+00:00"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "azure-nsg-nsg-test_statement",
+                    "uuid": "a3c12bef-e935-431d-9d7d-a483729d47f2",
+                    "description": "Current state: {\"total_rules\": 1, \"risky_rules_count\": 1, \"risky_rules\": [{\"rule_name\": \"AllowHTTP\", \"destination_port\": \"80\", \"protocol\": \"TCP\"}], \"location\": \"westeurope\"}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "capabilities": [],
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "caf198d1-3947-4ffd-9efe-fa46e07d555d",
+          "title": "Collection Metadata",
+          "description": "Baseline collected at 2026-10-25T10:05:31.394446+00:00",
+          "props": [
+            {
+              "name": "baseline-id",
+              "value": "baseline-azure-test-sub"
+            },
+            {
+              "name": "total-controls",
+              "value": "9"
+            },
+            {
+              "name": "subscription-id",
+              "value": "test-sub"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
