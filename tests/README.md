@@ -1,24 +1,29 @@
 # Testing & Quality Assurance Methodology
 
-> Comprehensive testing documentation for the **Automated Compliance Mapping & Gap Analysis Framework**, detailing test architectures, verification strategies, NIST OSCAL schema validation, and empirical research reproducibility.
+> Comprehensive testing documentation for the **Automated Compliance Mapping & Gap Analysis Framework**, detailing test architectures, verification strategies, NIST OSCAL schema validation, multi-cloud mock simulation, and empirical research reproducibility.
 
 ---
 
 ## 🎯 Testing Philosophy & Research Grounding
 
-In cybersecurity compliance research and Policy-as-Code engineering, automated verification is not merely a software hygiene practice—it is the **empirical baseline** that validates whether legal mandates can be reliably translated into machine-readable controls without semantic drift or false assurance.
+In cybersecurity compliance research and Policy-as-Code engineering, automated verification is not merely a software hygiene practice—it is the **empirical baseline** that validates whether legal mandates and technical infrastructure states can be reliably translated into machine-readable controls without semantic drift or false assurance.
 
-This framework integrates automated testing across four orthogonal dimensions:
+This framework integrates automated testing across five orthogonal dimensions:
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
 │                   NIST OSCAL Schema Validation                         │
-│     (Official v1.1.1 JSON Schema compliance via jsonschema/regex)      │
+│     (Official v1.1.1 Catalog & v1.1.2 Component-Definition schemas)    │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
 ┌───────────────────────────────────┴────────────────────────────────────┐
 │                    End-to-End Integration Tests                        │
-│          (CLI Orchestrator: Ingest -> Analyze -> Generate)             │
+│     (CLI Pipelines: Ingest -> Analyze -> Collect -> Normalize)         │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+┌───────────────────────────────────┴────────────────────────────────────┐
+│                 Multi-Cloud Mock Response Verification                 │
+│      (Zero-Credential ARM / SDK Mocking & Offline JSON Simulation)     │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
 ┌───────────────────────────────────┴────────────────────────────────────┐
@@ -28,7 +33,7 @@ This framework integrates automated testing across four orthogonal dimensions:
                                     │
 ┌───────────────────────────────────┴────────────────────────────────────┐
 │                         Core Unit Tests                                │
-│       Parser (Pydantic) | Friction Engine | OSCAL Profile Generator    │
+│       Parser | Friction Engine | Cloud Collectors | OSCAL Normalizer   │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -43,82 +48,69 @@ tests/
 ├── test_parser.py             # Unit tests for regulatory ingestion & Pydantic validation
 ├── test_friction_analyzer.py  # Unit tests for heuristic socio-technical friction engine
 ├── test_oscal_generator.py    # Unit tests for NIST OSCAL catalog construction
-├── test_integration.py        # End-to-end CLI orchestrator and artifact generation
 ├── test_oscal_validation.py   # Strict schema validation against official NIST schema
-└── test_edge_cases.py         # Boundary fuzzing, Unicode, ReDoS resistance, malformed input
+├── test_edge_cases.py         # Boundary fuzzing, Unicode, ReDoS resistance, malformed input
+├── test_integration.py        # Multi-regulation end-to-end pipeline integration
+├── test_technical_control.py  # Pydantic technical control & baseline model tests
+├── test_base_collector.py     # BaseCollector interface, error isolation, & persistence
+├── test_azure_collector.py    # AzureCollector live SDK client & mock response tests
+├── test_collectors.py         # End-to-end cloud collector error handling & boundary tests
+├── test_oscal_component_normalizer.py # NIST OSCAL Component-Definition generator tests
+├── test_normalizers.py        # Normalizer suite alias for OSCAL component tests
+└── test_main_baseline.py      # Baseline orchestrator CLI & Rich UI tests
 ```
 
 ---
 
 ## 🔬 Test Modules & Methodological Rationale
 
-### 1. `tests/test_parser.py` (Regulatory Ingestion Engine)
-- **What it tests**: Multi-regulation JSON ingestion, Pydantic schema validation, regulation name canonicalization (`"gdpr"` -> `"GDPR"`, `"nis 2"` -> `"NIS2"`), ID sanitization into OSCAL-compatible NCNames, and handling of malformed payloads.
-- **Why it matters**: Incomplete or unnormalized legal metadata corrupts downstream semantic mapping and causes catalog validation failures.
-- **Key Cases**:
-  - `test_parser_reads_valid_gdpr_article`: Verifies clean parsing and sub-clause extraction.
-  - `test_parser_handles_multiple_regulations`: Ingestion of heterogeneous GDPR, DORA, and NIS2 corpora.
-  - `test_parser_sanitizes_article_ids`: Normalizes whitespace and invalid characters.
-  - `test_parser_applicability_parsing`: Flexible parsing of lists, comma-separated strings, and null values.
-  - `test_parser_rejects_missing_required_fields`: Fail-fast Pydantic validation on incomplete models.
+### 1. Regulatory Ingestion & Friction Analysis (Step 1)
+- **`test_parser.py`**: Verifies multi-regulation JSON parsing, Pydantic schema validation, regulation name canonicalization (`"gdpr"` -> `"GDPR"`), and NCName ID sanitization.
+- **`test_friction_analyzer.py`**: Validates the detection of open-textured legal terms ("state of the art", "appropriate technical measures"), scoring automation feasibility and generating HITL guidance.
+- **`test_oscal_generator.py`**: Tests translation of regulatory articles into NIST OSCAL Catalog JSON models with friction properties.
+- **`test_oscal_validation.py`**: Asserts strict compliance with the official NIST OSCAL Control Catalog JSON Schema (v1.1.1).
+- **`test_edge_cases.py`**: Fuzzes parsers with adversarial inputs (Unicode, emojis, 60k ReDoS payloads, empty files).
+- **`test_integration.py`**: Tests end-to-end Step 1 pipeline execution from raw JSON to catalog artifacts.
 
-### 2. `tests/test_friction_analyzer.py` (Socio-Technical Friction Engine)
-- **What it tests**: Heuristic keyword scanner and scoring algorithm for open-textured legal terminology ("state of the art", "appropriate technical measures", "proportionate").
-- **Why it matters**: Investigates the core research hypothesis: legal indeterminacy creates operational friction that resists binary (Pass/Fail) Policy-as-Code automation.
-- **Key Cases**:
-  - `test_detects_high_friction_with_multiple_ambiguous_words`: Flags compounding ambiguity.
-  - `test_detects_state_of_the_art_phrase`: Isolates the primary trigger requiring dynamic telemetry.
-  - `test_detects_low_friction_with_binary_language`: Verifies high automation readiness for strict deadlines (e.g., "within 72 hours").
-  - `test_detects_medium_friction_with_mixed_language`: Validates hybrid evaluation requirements.
-  - `test_friction_analyzer_hitl_guidance_generation`: Verifies generation of actionable Human-in-the-Loop recommendations.
-
-### 3. `tests/test_oscal_generator.py` (NIST OSCAL Catalog Generator)
-- **What it tests**: Construction of NIST OSCAL v1.1.1 Catalog data models, control properties, sub-clause nesting into OSCAL `parts` (`item` / `statement`), and custom friction namespace encoding.
-- **Why it matters**: Generates standards-compliant artifacts that integrate directly with enterprise GRC platforms (FedRAMP, OpenShift Compliance Operator, Trestle).
-- **Key Cases**:
-  - `test_oscal_output_has_catalog_root`: Verifies mandatory root dictionary structure.
-  - `test_oscal_control_includes_friction_level`: Asserts friction metadata is embedded in `props` under `https://automated-compliance.org/ns/friction`.
-  - `test_oscal_sub_clauses_mapped_to_parts`: Validates hierarchical decomposition of clauses.
-
-### 4. `tests/test_oscal_validation.py` (Official NIST Schema Validation)
-- **What it tests**: Direct schema validation of all generated catalogs (`gdpr_catalog.json`, `dora_catalog.json`, `nis2_catalog.json`, `unified_catalog.json`) against the official NIST JSON Schema (`oscal_catalog_schema.json`).
-- **Why it matters**: Guarantees zero schema divergence, ensuring academic and industrial portability.
-- **Implementation Note**: Uses the `regex` engine monkey-patched into `jsonschema` to support ECMA-262 Unicode category properties (`\p{L}`, `\p{N}`) specified by NIST.
-
-### 5. `tests/test_integration.py` (CLI Pipeline Orchestration)
-- **What it tests**: End-to-end execution of `main.py` and `run_pipeline()`, checking artifact emission, regulation filtering, and Rich terminal visualization.
-- **Why it matters**: Ensures all modules interact cleanly under realistic command-line invocation scenarios.
-
-### 6. `tests/test_edge_cases.py` (Adversarial Robustness)
-- **What it tests**: Multilingual text (German DSGVO, Chinese cybersecurity law), emojis (🛡️), empty JSON arrays, duplicate article IDs, 60,000+ character legal texts (ReDoS prevention), and malformed syntax.
-- **Why it matters**: Protects the framework against denial-of-service vulnerabilities and edge-case ingestion crashes.
+### 2. Technical Control Baseline Collection (Step 2)
+- **`test_technical_control.py`**: Verifies Pydantic v2 runtime validation for `TechnicalControl` and `InfrastructureBaseline`, ensuring invalid control IDs are rejected and serialization preserves ISO 8601 timestamps.
+- **`test_base_collector.py`**: Asserts that `BaseCollector` cannot be instantiated directly (abstract contract), verifies the fault-tolerant category execution loop, and confirms error isolation.
+- **`test_azure_collector.py`**: Comprehensive verification of `AzureCollector` across all four control categories (IAM, Encryption, Network, Backup) using both mocked Azure SDK clients and local offline mock responses.
+- **`test_collectors.py`**: High-level integration tests asserting baseline collection integrity, multi-cloud dispatching, and compliance status rollup.
+- **`test_oscal_component_normalizer.py` / `test_normalizers.py`**: Validates transformation of infrastructure baselines into NIST OSCAL Component-Definitions (v1.1.2), asserting resource-level component deduplication and weakest-link compliance evaluation.
+- **`test_main_baseline.py`**: Verifies the CLI baseline collection orchestrator, testing provider selection, subscription overrides, mock data flags, and Rich table rendering.
 
 ---
 
-## 🚀 Running the Tests
+## 🧪 Zero-Credential Testing Strategy
+
+To guarantee that academic peer reviewers and CI/CD pipelines can reproduce all tests without requiring live Azure subscriptions, testing employs a dual-layer mocking strategy:
+
+1. **Local Response Simulation (`data/mock_cloud_responses/azure_mock_response.json`)**: Realistic JSON responses containing storage accounts, virtual machines, network security groups, and key vaults.
+2. **SDK Object Mocking (`unittest.mock`)**: Mocking ARM SDK client methods (`virtual_machines.list_all`, `storage_accounts.list_by_resource_group`) to simulate transient network timeouts, `403 Forbidden` errors, and malformed API returns.
+
+---
+
+## 🚀 Test Execution Commands
 
 ### Quick Execution
 ```bash
-# Run all 53 test cases
+# Run all 93 test cases
 pytest -v
+```
+
+### Run Step 2 Collector & Normalizer Tests Specifically
+```bash
+pytest tests/test_collectors.py tests/test_normalizers.py -v
 ```
 
 ### Run with Coverage Telemetry
 ```bash
-# Terminal output with line numbers of untested code
+# Terminal output with missing line numbers
 pytest -v --cov=src --cov-report=term-missing
 
 # Generate visual HTML coverage report
 pytest --cov=src --cov-report=html
-```
-
-### Run Specific Test Modules
-```bash
-# Run only OSCAL schema validation
-pytest tests/test_oscal_validation.py -v
-
-# Run only friction heuristic tests
-pytest tests/test_friction_analyzer.py -v
 ```
 
 ---
@@ -128,13 +120,22 @@ pytest tests/test_friction_analyzer.py -v
 | Module | Statements | Missing Lines | Coverage | Status |
 | :--- | :---: | :---: | :---: | :---: |
 | `src/__init__.py` | 4 | 0 | **100%** | Passed |
+| `src/models/technical_control.py` | 57 | 0 | **100%** | Passed |
+| `src/models/__init__.py` | 2 | 0 | **100%** | Passed |
+| `src/collectors/__init__.py` | 3 | 0 | **100%** | Passed |
+| `src/collectors/base_collector.py` | 60 | 6 | **90%** | Passed |
+| `src/collectors/azure_collector.py` | 282 | 26 | **91%** | Passed |
+| `src/normalizers/__init__.py` | 2 | 0 | **100%** | Passed |
+| `src/normalizers/oscal_component_normalizer.py` | 68 | 2 | **97%** | Passed |
+| `src/main_baseline.py` | 105 | 6 | **94%** | Passed |
+| `src/oscal_generator.py` | 85 | 2 | **98%** | Passed |
 | `src/friction_analyzer.py` | 172 | 7 | **96%** | Passed |
 | `src/main.py` | 124 | 6 | **95%** | Passed |
-| `src/oscal_generator.py` | 85 | 2 | **98%** | Passed |
 | `src/parser.py` | 133 | 29 | **78%** | Passed |
-| **Total Project** | **518** | **44** | **92%** | **Exceeds Target (>80%)** |
+| **Total Project** | **1,097** | **84** | **85%** | **Exceeds Target (>80%)** |
+| **Step 2 Subsystem** | **579** | **40** | **93%** | **Exceeds Target (>80%)** |
 
-### Static Analysis Checks
+### Static Analysis & Quality Gates
 ```bash
 # Code formatting check
 black --check src/ tests/
@@ -145,3 +146,4 @@ flake8 src/ tests/ --max-line-length=100
 # Strict static type safety
 mypy src/ tests/
 ```
+All static analysis checks pass with **zero warnings and zero errors**.
