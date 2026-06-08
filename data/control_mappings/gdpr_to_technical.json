@@ -1,0 +1,67 @@
+{
+  "regulatory_to_technical": {
+    "gdpr-art32": [
+      "azure-storage-encryption-*",
+      "azure-keyvault-protection-*",
+      "azure-vm-managed-identity-*",
+      "azure-storage-redundancy-*",
+      "azure-storage-https-*"
+    ],
+    "gdpr-art-32": [
+      "azure-storage-encryption-*",
+      "azure-keyvault-protection-*",
+      "azure-vm-managed-identity-*",
+      "azure-storage-redundancy-*",
+      "azure-storage-https-*"
+    ],
+    "gdpr-art30": [
+      "azure-storage-*"
+    ],
+    "gdpr-art33": [
+      "azure-monitor-*"
+    ],
+    "gdpr-art-33": [
+      "azure-monitor-*"
+    ],
+    "dora-art-6": [
+      "azure-nsg-*",
+      "azure-storage-redundancy-*",
+      "azure-keyvault-protection-*",
+      "azure-storage-encryption-*",
+      "azure-vm-managed-identity-*"
+    ],
+    "dora-art6": [
+      "azure-nsg-*",
+      "azure-storage-redundancy-*",
+      "azure-keyvault-protection-*"
+    ],
+    "dora-art-11": [
+      "azure-storage-redundancy-*",
+      "azure-backup-*"
+    ],
+    "dora-art11": [
+      "azure-storage-redundancy-*",
+      "azure-backup-*"
+    ],
+    "dora-art-19": [
+      "azure-monitor-*"
+    ],
+    "nis2-art-21": [
+      "azure-nsg-*",
+      "azure-storage-encryption-*",
+      "azure-keyvault-protection-*",
+      "azure-storage-redundancy-*",
+      "azure-vm-managed-identity-*"
+    ],
+    "nis2-art21": [
+      "azure-nsg-*",
+      "azure-storage-encryption-*",
+      "azure-keyvault-protection-*"
+    ]
+  },
+  "metadata": {
+    "description": "Control mapping configuration for GDPR, DORA, and NIS2 to Azure technical controls",
+    "version": "1.0.0",
+    "framework": "Automated Compliance Mapping Framework (Step 3)"
+  }
+}
