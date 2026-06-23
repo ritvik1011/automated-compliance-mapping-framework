@@ -1,0 +1,209 @@
+{
+  "baseline_id": "baseline-azure-test-sub",
+  "collection_timestamp": "2026-10-25T10:05:31.394446Z",
+  "cloud_provider": "azure",
+  "subscription_id": "test-sub",
+  "total_resources_scanned": 9,
+  "controls": [
+    {
+      "control_id": "azure-vm-managed-identity-testvm1",
+      "control_category": "identity_access_management",
+      "cloud_provider": "azure",
+      "resource_type": "VirtualMachine",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Compute/virtualMachines/testvm1",
+      "resource_name": "testvm1",
+      "control_description": "VM has managed identity configured",
+      "current_state": {
+        "identity_type": "SystemAssigned",
+        "principal_id": "12345678-1234-1234-1234-123456789012"
+      },
+      "compliance_status": "compliant",
+      "evidence_timestamp": "2026-10-25T10:05:31.391877Z",
+      "metadata": {
+        "location": "westeurope",
+        "resource_group": "rg-test"
+      }
+    },
+    {
+      "control_id": "azure-storage-encryption-teststorage1",
+      "control_category": "data_encryption",
+      "cloud_provider": "azure",
+      "resource_type": "StorageAccount",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage1",
+      "resource_name": "teststorage1",
+      "control_description": "Storage account encryption at rest status",
+      "current_state": {
+        "encryption_services": {
+          "blob": true,
+          "file": true
+        },
+        "encryption_key_source": "Microsoft.Storage",
+        "require_infrastructure_encryption": true
+      },
+      "compliance_status": "compliant",
+      "evidence_timestamp": "2026-10-25T10:05:31.393001Z",
+      "metadata": {
+        "location": "westeurope",
+        "resource_group": "rg-test",
+        "sku": "Standard_GRS",
+        "kind": "StorageV2"
+      }
+    },
+    {
+      "control_id": "azure-storage-https-teststorage1",
+      "control_category": "data_encryption",
+      "cloud_provider": "azure",
+      "resource_type": "StorageAccount",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage1",
+      "resource_name": "teststorage1",
+      "control_description": "Storage account enforces HTTPS-only traffic",
+      "current_state": {
+        "https_only": true
+      },
+      "compliance_status": "compliant",
+      "evidence_timestamp": "2026-10-25T10:05:31.393037Z",
+      "metadata": {
+        "location": "westeurope",
+        "resource_group": "rg-test"
+      }
+    },
+    {
+      "control_id": "azure-storage-encryption-teststorage2",
+      "control_category": "data_encryption",
+      "cloud_provider": "azure",
+      "resource_type": "StorageAccount",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "control_description": "Storage account encryption at rest status",
+      "current_state": {
+        "encryption_services": {
+          "blob": true,
+          "file": false
+        },
+        "encryption_key_source": "Microsoft.Storage",
+        "require_infrastructure_encryption": false
+      },
+      "compliance_status": "partial",
+      "evidence_timestamp": "2026-10-25T10:05:31.393326Z",
+      "metadata": {
+        "location": "westeurope",
+        "resource_group": "rg-test",
+        "sku": "Standard_LRS",
+        "kind": "StorageV2"
+      }
+    },
+    {
+      "control_id": "azure-storage-https-teststorage2",
+      "control_category": "data_encryption",
+      "cloud_provider": "azure",
+      "resource_type": "StorageAccount",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "control_description": "Storage account enforces HTTPS-only traffic",
+      "current_state": {
+        "https_only": false
+      },
+      "compliance_status": "non_compliant",
+      "evidence_timestamp": "2026-10-25T10:05:31.393355Z",
+      "metadata": {
+        "location": "westeurope",
+        "resource_group": "rg-test"
+      }
+    },
+    {
+      "control_id": "azure-keyvault-protection-testkv1",
+      "control_category": "data_encryption",
+      "cloud_provider": "azure",
+      "resource_type": "KeyVault",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.KeyVault/vaults/testkv1",
+      "resource_name": "testkv1",
+      "control_description": "Key Vault protection settings (soft-delete, purge protection)",
+      "current_state": {
+        "soft_delete_enabled": true,
+        "purge_protection_enabled": true,
+        "sku": "standard"
+      },
+      "compliance_status": "compliant",
+      "evidence_timestamp": "2026-10-25T10:05:31.393400Z",
+      "metadata": {
+        "location": "westeurope",
+        "resource_group": "rg-test"
+      }
+    },
+    {
+      "control_id": "azure-nsg-nsg-test",
+      "control_category": "network_security",
+      "cloud_provider": "azure",
+      "resource_type": "NetworkSecurityGroup",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+      "resource_name": "nsg-test",
+      "control_description": "Network Security Group rule analysis",
+      "current_state": {
+        "total_rules": 1,
+        "risky_rules_count": 1,
+        "risky_rules": [
+          {
+            "rule_name": "AllowHTTP",
+            "destination_port": "80",
+            "protocol": "TCP"
+          }
+        ],
+        "location": "westeurope"
+      },
+      "compliance_status": "non_compliant",
+      "evidence_timestamp": "2026-10-25T10:05:31.393842Z",
+      "metadata": {
+        "resource_group": "rg-test",
+        "location": "westeurope"
+      }
+    },
+    {
+      "control_id": "azure-storage-redundancy-teststorage1",
+      "control_category": "backup_recovery",
+      "cloud_provider": "azure",
+      "resource_type": "StorageAccount",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage1",
+      "resource_name": "teststorage1",
+      "control_description": "Storage account redundancy/backup configuration",
+      "current_state": {
+        "sku": "Standard_GRS",
+        "redundancy_level": "Geo-Redundant (cross-region backup)",
+        "is_geo_redundant": true
+      },
+      "compliance_status": "compliant",
+      "evidence_timestamp": "2026-10-25T10:05:31.394195Z",
+      "metadata": {
+        "resource_group": "rg-test",
+        "location": "westeurope",
+        "dora_relevance": "High - Maps to DORA Article 6 backup requirements"
+      }
+    },
+    {
+      "control_id": "azure-storage-redundancy-teststorage2",
+      "control_category": "backup_recovery",
+      "cloud_provider": "azure",
+      "resource_type": "StorageAccount",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "control_description": "Storage account redundancy/backup configuration",
+      "current_state": {
+        "sku": "Standard_LRS",
+        "redundancy_level": "Locally Redundant (lowest resilience)",
+        "is_geo_redundant": false
+      },
+      "compliance_status": "non_compliant",
+      "evidence_timestamp": "2026-10-25T10:05:31.394232Z",
+      "metadata": {
+        "resource_group": "rg-test",
+        "location": "westeurope",
+        "dora_relevance": "High - Maps to DORA Article 6 backup requirements"
+      }
+    }
+  ],
+  "collection_metadata": {
+    "collector_version": "1.0.0",
+    "region": null,
+    "errors_encountered": 0,
+    "error_details": []
+  }
+}

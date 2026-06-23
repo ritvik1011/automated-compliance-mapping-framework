@@ -1,0 +1,209 @@
+{
+  "report_id": "gap-report-586d89d0-d2a9-4a1b-b966-8da283a2a078",
+  "catalog_id": "regulatory-catalog",
+  "baseline_id": "baseline-azure-test-sub",
+  "analysis_timestamp": "2026-10-25T16:39:23.942624Z",
+  "total_regulatory_controls": 2,
+  "total_technical_controls": 9,
+  "results": [
+    {
+      "regulatory_control_id": "gdpr-art-32",
+      "regulatory_control_title": "Security of processing",
+      "regulation": "GDPR",
+      "mapped_technical_controls": [
+        "azure-vm-managed-identity-testvm1",
+        "azure-storage-encryption-teststorage1",
+        "azure-storage-https-teststorage1",
+        "azure-storage-encryption-teststorage2",
+        "azure-storage-https-teststorage2",
+        "azure-keyvault-protection-testkv1",
+        "azure-nsg-nsg-test",
+        "azure-storage-redundancy-teststorage1",
+        "azure-storage-redundancy-teststorage2"
+      ],
+      "gap_type": "partial",
+      "compliance_status": "partial",
+      "confidence_score": 0.75,
+      "confidence_level": "medium",
+      "evidence": [
+        {
+          "control_id": "azure-vm-managed-identity-testvm1",
+          "resource_name": "testvm1",
+          "compliance_status": "compliant",
+          "current_state": {
+            "identity_type": "SystemAssigned",
+            "principal_id": "12345678-1234-1234-1234-123456789012"
+          },
+          "timestamp": "2026-10-25T10:05:31.391877+00:00"
+        },
+        {
+          "control_id": "azure-storage-encryption-teststorage1",
+          "resource_name": "teststorage1",
+          "compliance_status": "compliant",
+          "current_state": {
+            "encryption_services": {
+              "blob": true,
+              "file": true
+            },
+            "encryption_key_source": "Microsoft.Storage",
+            "require_infrastructure_encryption": true
+          },
+          "timestamp": "2026-10-25T10:05:31.393001+00:00"
+        },
+        {
+          "control_id": "azure-storage-https-teststorage1",
+          "resource_name": "teststorage1",
+          "compliance_status": "compliant",
+          "current_state": {
+            "https_only": true
+          },
+          "timestamp": "2026-10-25T10:05:31.393037+00:00"
+        },
+        {
+          "control_id": "azure-storage-encryption-teststorage2",
+          "resource_name": "teststorage2",
+          "compliance_status": "partial",
+          "current_state": {
+            "encryption_services": {
+              "blob": true,
+              "file": false
+            },
+            "encryption_key_source": "Microsoft.Storage",
+            "require_infrastructure_encryption": false
+          },
+          "timestamp": "2026-10-25T10:05:31.393326+00:00"
+        },
+        {
+          "control_id": "azure-storage-https-teststorage2",
+          "resource_name": "teststorage2",
+          "compliance_status": "non_compliant",
+          "current_state": {
+            "https_only": false
+          },
+          "timestamp": "2026-10-25T10:05:31.393355+00:00"
+        },
+        {
+          "control_id": "azure-keyvault-protection-testkv1",
+          "resource_name": "testkv1",
+          "compliance_status": "compliant",
+          "current_state": {
+            "soft_delete_enabled": true,
+            "purge_protection_enabled": true,
+            "sku": "standard"
+          },
+          "timestamp": "2026-10-25T10:05:31.393400+00:00"
+        },
+        {
+          "control_id": "azure-nsg-nsg-test",
+          "resource_name": "nsg-test",
+          "compliance_status": "non_compliant",
+          "current_state": {
+            "total_rules": 1,
+            "risky_rules_count": 1,
+            "risky_rules": [
+              {
+                "rule_name": "AllowHTTP",
+                "destination_port": "80",
+                "protocol": "TCP"
+              }
+            ],
+            "location": "westeurope"
+          },
+          "timestamp": "2026-10-25T10:05:31.393842+00:00"
+        },
+        {
+          "control_id": "azure-storage-redundancy-teststorage1",
+          "resource_name": "teststorage1",
+          "compliance_status": "compliant",
+          "current_state": {
+            "sku": "Standard_GRS",
+            "redundancy_level": "Geo-Redundant (cross-region backup)",
+            "is_geo_redundant": true
+          },
+          "timestamp": "2026-10-25T10:05:31.394195+00:00"
+        },
+        {
+          "control_id": "azure-storage-redundancy-teststorage2",
+          "resource_name": "teststorage2",
+          "compliance_status": "non_compliant",
+          "current_state": {
+            "sku": "Standard_LRS",
+            "redundancy_level": "Locally Redundant (lowest resilience)",
+            "is_geo_redundant": false
+          },
+          "timestamp": "2026-10-25T10:05:31.394232+00:00"
+        }
+      ],
+      "friction_points": [
+        "Complex mapping (9 technical controls) - requires careful coordination"
+      ],
+      "recommendations": [
+        "Complete partial implementation of technical controls",
+        "Identify missing components and implement them",
+        "Conduct manual review due to socio-technical friction",
+        "Engage legal and technical teams to clarify requirements"
+      ],
+      "analysis_timestamp": "2026-10-25T16:39:23.942349Z",
+      "metadata": {
+        "friction_level": "medium",
+        "num_mapped_controls": 9
+      }
+    },
+    {
+      "regulatory_control_id": "gdpr-art-33",
+      "regulatory_control_title": "Notification of a personal data breach to the supervisory authority",
+      "regulation": "GDPR",
+      "mapped_technical_controls": [],
+      "gap_type": "missing",
+      "compliance_status": "non-compliant",
+      "confidence_score": 0.0,
+      "confidence_level": "low",
+      "evidence": [],
+      "friction_points": [
+        "No technical controls found - manual mapping required"
+      ],
+      "recommendations": [
+        "Implement technical controls for this regulatory requirement",
+        "Review regulatory text to identify specific technical measures needed",
+        "Conduct manual review due to socio-technical friction",
+        "Engage legal and technical teams to clarify requirements"
+      ],
+      "analysis_timestamp": "2026-10-25T16:39:23.942475Z",
+      "metadata": {
+        "friction_level": "medium",
+        "num_mapped_controls": 0
+      }
+    }
+  ],
+  "summary": {
+    "total_controls_analyzed": 2,
+    "gap_type_breakdown": {
+      "missing": 1,
+      "partial": 1,
+      "non_compliant": 0,
+      "unknown": 0,
+      "compliant": 0
+    },
+    "compliance_status_breakdown": {
+      "compliant": 0,
+      "partial": 1,
+      "non-compliant": 1,
+      "unknown": 0
+    },
+    "confidence_breakdown": {
+      "high": 0,
+      "medium": 1,
+      "low": 1
+    },
+    "avg_confidence_score": 0.375
+  },
+  "metadata": {
+    "evaluator_version": "1.0.0",
+    "analysis_timestamp": "2026-10-25T16:39:23.942597+00:00"
+  },
+  "catalog_title": null,
+  "cloud_provider": "unknown",
+  "evaluations": [],
+  "all_gaps": [],
+  "generated_at": "2026-10-25T16:39:23.942633Z"
+}

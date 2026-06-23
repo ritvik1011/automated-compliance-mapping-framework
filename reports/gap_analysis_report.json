@@ -1,0 +1,879 @@
+{
+  "report_id": "b424d1cb-890d-420d-9a15-c3a201a40b9b",
+  "generated_at": "2026-10-25T14:51:44.861066Z",
+  "framework_version": "1.0.0",
+  "catalog_title": "Regulatory Compliance Catalog",
+  "baseline_id": "baseline-azure-test-sub",
+  "cloud_provider": "azure",
+  "summary": {
+    "total_regulatory_controls": 5,
+    "compliant_controls": 0,
+    "partially_compliant_controls": 1,
+    "non_compliant_controls": 4,
+    "unmapped_controls": 0,
+    "overall_compliance_percentage": 41.71,
+    "overall_confidence_score": 0.561,
+    "total_gaps": 14,
+    "gaps_by_severity": {
+      "critical": 0,
+      "high": 11,
+      "medium": 3,
+      "low": 0,
+      "informational": 0
+    },
+    "hitl_reviews_required": 3
+  },
+  "evaluations": [
+    {
+      "regulatory_control_id": "gdpr-art-32",
+      "regulation": "GDPR",
+      "title": "Security of processing",
+      "legal_reference": "Regulation (EU) 2016/679, Article 32(1)",
+      "friction_level": "High",
+      "friction_score": 10.0,
+      "hitl_recommended": true,
+      "status": "non_compliant",
+      "compliance_score": 58.16,
+      "confidence_score": 0.599,
+      "confidence_breakdown": {
+        "evidence_coverage": 1.0,
+        "friction_penalty": 0.35,
+        "status_consistency": 0.922,
+        "hitl_adjustment": 0.0,
+        "final_score": 0.599
+      },
+      "mapped_categories": [
+        "data_encryption",
+        "identity_access_management",
+        "network_security",
+        "backup_recovery"
+      ],
+      "total_mapped_controls": 9,
+      "passed_controls": 5,
+      "failed_controls": 3,
+      "partial_controls": 1,
+      "gaps": [
+        {
+          "gap_id": "GAP-GDPR-001",
+          "regulatory_control_id": "gdpr-art-32",
+          "regulation": "GDPR",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-storage-encryption-teststorage2",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+          "resource_name": "teststorage2",
+          "severity": "medium",
+          "title": "Encryption Deficiency on 'teststorage2'",
+          "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+          "observed_state": {
+            "encryption_services": {
+              "blob": true,
+              "file": false
+            },
+            "encryption_key_source": "Microsoft.Storage",
+            "require_infrastructure_encryption": false
+          },
+          "expected_state": {
+            "compliance_status": "compliant"
+          },
+          "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        },
+        {
+          "gap_id": "GAP-GDPR-002",
+          "regulatory_control_id": "gdpr-art-32",
+          "regulation": "GDPR",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-storage-https-teststorage2",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+          "resource_name": "teststorage2",
+          "severity": "high",
+          "title": "Encryption Deficiency on 'teststorage2'",
+          "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+          "observed_state": {
+            "https_only": false
+          },
+          "expected_state": {
+            "compliance_status": "compliant",
+            "https_only": true
+          },
+          "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        },
+        {
+          "gap_id": "GAP-GDPR-003",
+          "regulatory_control_id": "gdpr-art-32",
+          "regulation": "GDPR",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-nsg-nsg-test",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+          "resource_name": "nsg-test",
+          "severity": "high",
+          "title": "Insecure Network Security Rule on 'nsg-test'",
+          "description": "Network security group 'nsg-test' permits overly permissive ingress/egress rules, violating network boundary isolation requirements under GDPR.",
+          "observed_state": {
+            "total_rules": 1,
+            "risky_rules_count": 1,
+            "risky_rules": [
+              {
+                "rule_name": "AllowHTTP",
+                "destination_port": "80",
+                "protocol": "TCP"
+              }
+            ],
+            "location": "westeurope"
+          },
+          "expected_state": {
+            "compliance_status": "compliant"
+          },
+          "remediation_guidance": "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        },
+        {
+          "gap_id": "GAP-GDPR-004",
+          "regulatory_control_id": "gdpr-art-32",
+          "regulation": "GDPR",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-storage-redundancy-teststorage2",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+          "resource_name": "teststorage2",
+          "severity": "high",
+          "title": "Redundancy / Disaster Recovery Gap on 'teststorage2'",
+          "description": "Resource 'teststorage2' uses local-only redundancy (LRS), failing cross-regional disaster resilience requirements under GDPR (e.g. DORA Art. 11, NIS2 Art. 21).",
+          "observed_state": {
+            "sku": "Standard_LRS",
+            "redundancy_level": "Locally Redundant (lowest resilience)",
+            "is_geo_redundant": false
+          },
+          "expected_state": {
+            "compliance_status": "compliant"
+          },
+          "remediation_guidance": "az storage account update --name teststorage2 --sku Standard_GRS",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        }
+      ],
+      "remediation_steps": [
+        "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+        "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+        "az storage account update --name teststorage2 --sku Standard_GRS"
+      ],
+      "hitl_guidance": [
+        "Statutory text for 'gdpr-art-32' contains legal friction (Score: 10.0/10.0, Level: High).",
+        "Automated check verifies technical baseline, but qualitative 'state of the art' review must be signed off by a qualified Data Protection Officer (DPO) or Lead Architect.",
+        "Document technical safeguards within the formal enterprise Information Security Management System (ISMS) risk register."
+      ]
+    },
+    {
+      "regulatory_control_id": "gdpr-art-33",
+      "regulation": "GDPR",
+      "title": "Notification of a personal data breach to the supervisory authority",
+      "legal_reference": "Regulation (EU) 2016/679, Article 33(1)",
+      "friction_level": "High",
+      "friction_score": 6.6,
+      "hitl_recommended": true,
+      "status": "partially_compliant",
+      "compliance_score": 40.0,
+      "confidence_score": 0.385,
+      "confidence_breakdown": {
+        "evidence_coverage": 0.5,
+        "friction_penalty": 0.231,
+        "status_consistency": 1.0,
+        "hitl_adjustment": 0.0,
+        "final_score": 0.385
+      },
+      "mapped_categories": [
+        "logging_monitoring",
+        "identity_access_management"
+      ],
+      "total_mapped_controls": 1,
+      "passed_controls": 1,
+      "failed_controls": 0,
+      "partial_controls": 0,
+      "gaps": [
+        {
+          "gap_id": "GAP-GDPR-005",
+          "regulatory_control_id": "gdpr-art-33",
+          "regulation": "GDPR",
+          "sub_clause_id": null,
+          "technical_control_id": null,
+          "resource_id": null,
+          "resource_name": null,
+          "severity": "high",
+          "title": "Missing Evidence for Logging Monitoring",
+          "description": "Regulatory control requires logging_monitoring, but no telemetry was collected from cloud infrastructure. Audit logging and breach detection mechanisms needed to alert within 72 hours.",
+          "observed_state": {},
+          "expected_state": {},
+          "remediation_guidance": "Deploy and configure resources in category 'logging_monitoring', or extend cloud collectors to ingest this telemetry.",
+          "hitl_action": "Verify with security engineering if this control category is managed outside cloud automation."
+        }
+      ],
+      "remediation_steps": [],
+      "hitl_guidance": [
+        "Statutory text for 'gdpr-art-33' contains legal friction (Score: 6.6/10.0, Level: High).",
+        "Automated check verifies technical baseline, but qualitative 'state of the art' review must be signed off by a qualified Data Protection Officer (DPO) or Lead Architect.",
+        "Document technical safeguards within the formal enterprise Information Security Management System (ISMS) risk register."
+      ]
+    },
+    {
+      "regulatory_control_id": "dora-art-19",
+      "regulation": "DORA",
+      "title": "Reporting of major ICT-related incidents",
+      "legal_reference": "Regulation (EU) 2022/2554, Article 19(4)",
+      "friction_level": "Low",
+      "friction_score": 0.0,
+      "hitl_recommended": false,
+      "status": "non_compliant",
+      "compliance_score": 0.0,
+      "confidence_score": 0.425,
+      "confidence_breakdown": {
+        "evidence_coverage": 0.5,
+        "friction_penalty": 0.0,
+        "status_consistency": 0.85,
+        "hitl_adjustment": 0.0,
+        "final_score": 0.425
+      },
+      "mapped_categories": [
+        "logging_monitoring",
+        "network_security"
+      ],
+      "total_mapped_controls": 1,
+      "passed_controls": 0,
+      "failed_controls": 1,
+      "partial_controls": 0,
+      "gaps": [
+        {
+          "gap_id": "GAP-DORA-006",
+          "regulatory_control_id": "dora-art-19",
+          "regulation": "DORA",
+          "sub_clause_id": null,
+          "technical_control_id": null,
+          "resource_id": null,
+          "resource_name": null,
+          "severity": "high",
+          "title": "Missing Evidence for Logging Monitoring",
+          "description": "Regulatory control requires logging_monitoring, but no telemetry was collected from cloud infrastructure. Continuous telemetry and log aggregation for prompt incident classification.",
+          "observed_state": {},
+          "expected_state": {},
+          "remediation_guidance": "Deploy and configure resources in category 'logging_monitoring', or extend cloud collectors to ingest this telemetry.",
+          "hitl_action": "Verify with security engineering if this control category is managed outside cloud automation."
+        },
+        {
+          "gap_id": "GAP-DORA-007",
+          "regulatory_control_id": "dora-art-19",
+          "regulation": "DORA",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-nsg-nsg-test",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+          "resource_name": "nsg-test",
+          "severity": "high",
+          "title": "Insecure Network Security Rule on 'nsg-test'",
+          "description": "Network security group 'nsg-test' permits overly permissive ingress/egress rules, violating network boundary isolation requirements under DORA.",
+          "observed_state": {
+            "total_rules": 1,
+            "risky_rules_count": 1,
+            "risky_rules": [
+              {
+                "rule_name": "AllowHTTP",
+                "destination_port": "80",
+                "protocol": "TCP"
+              }
+            ],
+            "location": "westeurope"
+          },
+          "expected_state": {
+            "compliance_status": "compliant"
+          },
+          "remediation_guidance": "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        }
+      ],
+      "remediation_steps": [
+        "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'"
+      ],
+      "hitl_guidance": []
+    },
+    {
+      "regulatory_control_id": "dora-art-6",
+      "regulation": "DORA",
+      "title": "ICT risk management framework",
+      "legal_reference": "Regulation (EU) 2022/2554, Article 6(1)",
+      "friction_level": "Medium",
+      "friction_score": 3.8,
+      "hitl_recommended": false,
+      "status": "non_compliant",
+      "compliance_score": 54.87,
+      "confidence_score": 0.799,
+      "confidence_breakdown": {
+        "evidence_coverage": 1.0,
+        "friction_penalty": 0.133,
+        "status_consistency": 0.921,
+        "hitl_adjustment": 0.0,
+        "final_score": 0.799
+      },
+      "mapped_categories": [
+        "identity_access_management",
+        "data_encryption",
+        "network_security"
+      ],
+      "total_mapped_controls": 7,
+      "passed_controls": 4,
+      "failed_controls": 2,
+      "partial_controls": 1,
+      "gaps": [
+        {
+          "gap_id": "GAP-DORA-008",
+          "regulatory_control_id": "dora-art-6",
+          "regulation": "DORA",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-storage-encryption-teststorage2",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+          "resource_name": "teststorage2",
+          "severity": "medium",
+          "title": "Encryption Deficiency on 'teststorage2'",
+          "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+          "observed_state": {
+            "encryption_services": {
+              "blob": true,
+              "file": false
+            },
+            "encryption_key_source": "Microsoft.Storage",
+            "require_infrastructure_encryption": false
+          },
+          "expected_state": {
+            "compliance_status": "compliant"
+          },
+          "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        },
+        {
+          "gap_id": "GAP-DORA-009",
+          "regulatory_control_id": "dora-art-6",
+          "regulation": "DORA",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-storage-https-teststorage2",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+          "resource_name": "teststorage2",
+          "severity": "high",
+          "title": "Encryption Deficiency on 'teststorage2'",
+          "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+          "observed_state": {
+            "https_only": false
+          },
+          "expected_state": {
+            "compliance_status": "compliant",
+            "https_only": true
+          },
+          "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        },
+        {
+          "gap_id": "GAP-DORA-010",
+          "regulatory_control_id": "dora-art-6",
+          "regulation": "DORA",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-nsg-nsg-test",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+          "resource_name": "nsg-test",
+          "severity": "high",
+          "title": "Insecure Network Security Rule on 'nsg-test'",
+          "description": "Network security group 'nsg-test' permits overly permissive ingress/egress rules, violating network boundary isolation requirements under DORA.",
+          "observed_state": {
+            "total_rules": 1,
+            "risky_rules_count": 1,
+            "risky_rules": [
+              {
+                "rule_name": "AllowHTTP",
+                "destination_port": "80",
+                "protocol": "TCP"
+              }
+            ],
+            "location": "westeurope"
+          },
+          "expected_state": {
+            "compliance_status": "compliant"
+          },
+          "remediation_guidance": "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        }
+      ],
+      "remediation_steps": [
+        "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+        "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'"
+      ],
+      "hitl_guidance": []
+    },
+    {
+      "regulatory_control_id": "nis2-art-21",
+      "regulation": "NIS2",
+      "title": "Cybersecurity risk-management measures",
+      "legal_reference": "Directive (EU) 2022/2555, Article 21(1) and (2)",
+      "friction_level": "High",
+      "friction_score": 10.0,
+      "hitl_recommended": true,
+      "status": "non_compliant",
+      "compliance_score": 55.54,
+      "confidence_score": 0.599,
+      "confidence_breakdown": {
+        "evidence_coverage": 1.0,
+        "friction_penalty": 0.35,
+        "status_consistency": 0.922,
+        "hitl_adjustment": 0.0,
+        "final_score": 0.599
+      },
+      "mapped_categories": [
+        "network_security",
+        "data_encryption",
+        "backup_recovery",
+        "identity_access_management"
+      ],
+      "total_mapped_controls": 9,
+      "passed_controls": 5,
+      "failed_controls": 3,
+      "partial_controls": 1,
+      "gaps": [
+        {
+          "gap_id": "GAP-NIS2-011",
+          "regulatory_control_id": "nis2-art-21",
+          "regulation": "NIS2",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-nsg-nsg-test",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+          "resource_name": "nsg-test",
+          "severity": "high",
+          "title": "Insecure Network Security Rule on 'nsg-test'",
+          "description": "Network security group 'nsg-test' permits overly permissive ingress/egress rules, violating network boundary isolation requirements under NIS2.",
+          "observed_state": {
+            "total_rules": 1,
+            "risky_rules_count": 1,
+            "risky_rules": [
+              {
+                "rule_name": "AllowHTTP",
+                "destination_port": "80",
+                "protocol": "TCP"
+              }
+            ],
+            "location": "westeurope"
+          },
+          "expected_state": {
+            "compliance_status": "compliant"
+          },
+          "remediation_guidance": "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        },
+        {
+          "gap_id": "GAP-NIS2-012",
+          "regulatory_control_id": "nis2-art-21",
+          "regulation": "NIS2",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-storage-encryption-teststorage2",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+          "resource_name": "teststorage2",
+          "severity": "medium",
+          "title": "Encryption Deficiency on 'teststorage2'",
+          "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+          "observed_state": {
+            "encryption_services": {
+              "blob": true,
+              "file": false
+            },
+            "encryption_key_source": "Microsoft.Storage",
+            "require_infrastructure_encryption": false
+          },
+          "expected_state": {
+            "compliance_status": "compliant"
+          },
+          "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        },
+        {
+          "gap_id": "GAP-NIS2-013",
+          "regulatory_control_id": "nis2-art-21",
+          "regulation": "NIS2",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-storage-https-teststorage2",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+          "resource_name": "teststorage2",
+          "severity": "high",
+          "title": "Encryption Deficiency on 'teststorage2'",
+          "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+          "observed_state": {
+            "https_only": false
+          },
+          "expected_state": {
+            "compliance_status": "compliant",
+            "https_only": true
+          },
+          "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        },
+        {
+          "gap_id": "GAP-NIS2-014",
+          "regulatory_control_id": "nis2-art-21",
+          "regulation": "NIS2",
+          "sub_clause_id": null,
+          "technical_control_id": "azure-storage-redundancy-teststorage2",
+          "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+          "resource_name": "teststorage2",
+          "severity": "high",
+          "title": "Redundancy / Disaster Recovery Gap on 'teststorage2'",
+          "description": "Resource 'teststorage2' uses local-only redundancy (LRS), failing cross-regional disaster resilience requirements under NIS2 (e.g. DORA Art. 11, NIS2 Art. 21).",
+          "observed_state": {
+            "sku": "Standard_LRS",
+            "redundancy_level": "Locally Redundant (lowest resilience)",
+            "is_geo_redundant": false
+          },
+          "expected_state": {
+            "compliance_status": "compliant"
+          },
+          "remediation_guidance": "az storage account update --name teststorage2 --sku Standard_GRS",
+          "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+        }
+      ],
+      "remediation_steps": [
+        "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+        "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+        "az storage account update --name teststorage2 --sku Standard_GRS"
+      ],
+      "hitl_guidance": [
+        "Statutory text for 'nis2-art-21' contains legal friction (Score: 10.0/10.0, Level: High).",
+        "Automated check verifies technical baseline, but qualitative 'state of the art' review must be signed off by a qualified Data Protection Officer (DPO) or Lead Architect.",
+        "Document technical safeguards within the formal enterprise Information Security Management System (ISMS) risk register."
+      ]
+    }
+  ],
+  "all_gaps": [
+    {
+      "gap_id": "GAP-GDPR-001",
+      "regulatory_control_id": "gdpr-art-32",
+      "regulation": "GDPR",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-storage-encryption-teststorage2",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "severity": "medium",
+      "title": "Encryption Deficiency on 'teststorage2'",
+      "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+      "observed_state": {
+        "encryption_services": {
+          "blob": true,
+          "file": false
+        },
+        "encryption_key_source": "Microsoft.Storage",
+        "require_infrastructure_encryption": false
+      },
+      "expected_state": {
+        "compliance_status": "compliant"
+      },
+      "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-GDPR-002",
+      "regulatory_control_id": "gdpr-art-32",
+      "regulation": "GDPR",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-storage-https-teststorage2",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "severity": "high",
+      "title": "Encryption Deficiency on 'teststorage2'",
+      "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+      "observed_state": {
+        "https_only": false
+      },
+      "expected_state": {
+        "compliance_status": "compliant",
+        "https_only": true
+      },
+      "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-GDPR-003",
+      "regulatory_control_id": "gdpr-art-32",
+      "regulation": "GDPR",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-nsg-nsg-test",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+      "resource_name": "nsg-test",
+      "severity": "high",
+      "title": "Insecure Network Security Rule on 'nsg-test'",
+      "description": "Network security group 'nsg-test' permits overly permissive ingress/egress rules, violating network boundary isolation requirements under GDPR.",
+      "observed_state": {
+        "total_rules": 1,
+        "risky_rules_count": 1,
+        "risky_rules": [
+          {
+            "rule_name": "AllowHTTP",
+            "destination_port": "80",
+            "protocol": "TCP"
+          }
+        ],
+        "location": "westeurope"
+      },
+      "expected_state": {
+        "compliance_status": "compliant"
+      },
+      "remediation_guidance": "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-GDPR-004",
+      "regulatory_control_id": "gdpr-art-32",
+      "regulation": "GDPR",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-storage-redundancy-teststorage2",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "severity": "high",
+      "title": "Redundancy / Disaster Recovery Gap on 'teststorage2'",
+      "description": "Resource 'teststorage2' uses local-only redundancy (LRS), failing cross-regional disaster resilience requirements under GDPR (e.g. DORA Art. 11, NIS2 Art. 21).",
+      "observed_state": {
+        "sku": "Standard_LRS",
+        "redundancy_level": "Locally Redundant (lowest resilience)",
+        "is_geo_redundant": false
+      },
+      "expected_state": {
+        "compliance_status": "compliant"
+      },
+      "remediation_guidance": "az storage account update --name teststorage2 --sku Standard_GRS",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-GDPR-005",
+      "regulatory_control_id": "gdpr-art-33",
+      "regulation": "GDPR",
+      "sub_clause_id": null,
+      "technical_control_id": null,
+      "resource_id": null,
+      "resource_name": null,
+      "severity": "high",
+      "title": "Missing Evidence for Logging Monitoring",
+      "description": "Regulatory control requires logging_monitoring, but no telemetry was collected from cloud infrastructure. Audit logging and breach detection mechanisms needed to alert within 72 hours.",
+      "observed_state": {},
+      "expected_state": {},
+      "remediation_guidance": "Deploy and configure resources in category 'logging_monitoring', or extend cloud collectors to ingest this telemetry.",
+      "hitl_action": "Verify with security engineering if this control category is managed outside cloud automation."
+    },
+    {
+      "gap_id": "GAP-DORA-006",
+      "regulatory_control_id": "dora-art-19",
+      "regulation": "DORA",
+      "sub_clause_id": null,
+      "technical_control_id": null,
+      "resource_id": null,
+      "resource_name": null,
+      "severity": "high",
+      "title": "Missing Evidence for Logging Monitoring",
+      "description": "Regulatory control requires logging_monitoring, but no telemetry was collected from cloud infrastructure. Continuous telemetry and log aggregation for prompt incident classification.",
+      "observed_state": {},
+      "expected_state": {},
+      "remediation_guidance": "Deploy and configure resources in category 'logging_monitoring', or extend cloud collectors to ingest this telemetry.",
+      "hitl_action": "Verify with security engineering if this control category is managed outside cloud automation."
+    },
+    {
+      "gap_id": "GAP-DORA-007",
+      "regulatory_control_id": "dora-art-19",
+      "regulation": "DORA",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-nsg-nsg-test",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+      "resource_name": "nsg-test",
+      "severity": "high",
+      "title": "Insecure Network Security Rule on 'nsg-test'",
+      "description": "Network security group 'nsg-test' permits overly permissive ingress/egress rules, violating network boundary isolation requirements under DORA.",
+      "observed_state": {
+        "total_rules": 1,
+        "risky_rules_count": 1,
+        "risky_rules": [
+          {
+            "rule_name": "AllowHTTP",
+            "destination_port": "80",
+            "protocol": "TCP"
+          }
+        ],
+        "location": "westeurope"
+      },
+      "expected_state": {
+        "compliance_status": "compliant"
+      },
+      "remediation_guidance": "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-DORA-008",
+      "regulatory_control_id": "dora-art-6",
+      "regulation": "DORA",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-storage-encryption-teststorage2",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "severity": "medium",
+      "title": "Encryption Deficiency on 'teststorage2'",
+      "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+      "observed_state": {
+        "encryption_services": {
+          "blob": true,
+          "file": false
+        },
+        "encryption_key_source": "Microsoft.Storage",
+        "require_infrastructure_encryption": false
+      },
+      "expected_state": {
+        "compliance_status": "compliant"
+      },
+      "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-DORA-009",
+      "regulatory_control_id": "dora-art-6",
+      "regulation": "DORA",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-storage-https-teststorage2",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "severity": "high",
+      "title": "Encryption Deficiency on 'teststorage2'",
+      "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+      "observed_state": {
+        "https_only": false
+      },
+      "expected_state": {
+        "compliance_status": "compliant",
+        "https_only": true
+      },
+      "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-DORA-010",
+      "regulatory_control_id": "dora-art-6",
+      "regulation": "DORA",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-nsg-nsg-test",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+      "resource_name": "nsg-test",
+      "severity": "high",
+      "title": "Insecure Network Security Rule on 'nsg-test'",
+      "description": "Network security group 'nsg-test' permits overly permissive ingress/egress rules, violating network boundary isolation requirements under DORA.",
+      "observed_state": {
+        "total_rules": 1,
+        "risky_rules_count": 1,
+        "risky_rules": [
+          {
+            "rule_name": "AllowHTTP",
+            "destination_port": "80",
+            "protocol": "TCP"
+          }
+        ],
+        "location": "westeurope"
+      },
+      "expected_state": {
+        "compliance_status": "compliant"
+      },
+      "remediation_guidance": "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-NIS2-011",
+      "regulatory_control_id": "nis2-art-21",
+      "regulation": "NIS2",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-nsg-nsg-test",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Network/networkSecurityGroups/nsg-test",
+      "resource_name": "nsg-test",
+      "severity": "high",
+      "title": "Insecure Network Security Rule on 'nsg-test'",
+      "description": "Network security group 'nsg-test' permits overly permissive ingress/egress rules, violating network boundary isolation requirements under NIS2.",
+      "observed_state": {
+        "total_rules": 1,
+        "risky_rules_count": 1,
+        "risky_rules": [
+          {
+            "rule_name": "AllowHTTP",
+            "destination_port": "80",
+            "protocol": "TCP"
+          }
+        ],
+        "location": "westeurope"
+      },
+      "expected_state": {
+        "compliance_status": "compliant"
+      },
+      "remediation_guidance": "az network nsg rule update --resource-group <rg> --nsg-name nsg-test --name <rule-name> --access Deny --source-address-prefixes '0.0.0.0/0'",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-NIS2-012",
+      "regulatory_control_id": "nis2-art-21",
+      "regulation": "NIS2",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-storage-encryption-teststorage2",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "severity": "medium",
+      "title": "Encryption Deficiency on 'teststorage2'",
+      "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+      "observed_state": {
+        "encryption_services": {
+          "blob": true,
+          "file": false
+        },
+        "encryption_key_source": "Microsoft.Storage",
+        "require_infrastructure_encryption": false
+      },
+      "expected_state": {
+        "compliance_status": "compliant"
+      },
+      "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-NIS2-013",
+      "regulatory_control_id": "nis2-art-21",
+      "regulation": "NIS2",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-storage-https-teststorage2",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "severity": "high",
+      "title": "Encryption Deficiency on 'teststorage2'",
+      "description": "Resource 'teststorage2' (StorageAccount) does not enforce required cryptographic protections (HTTPS-only or customer-managed key encryption at rest).",
+      "observed_state": {
+        "https_only": false
+      },
+      "expected_state": {
+        "compliance_status": "compliant",
+        "https_only": true
+      },
+      "remediation_guidance": "az storage account update --name teststorage2 --https-only true --min-tls-version TLS1_2",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    },
+    {
+      "gap_id": "GAP-NIS2-014",
+      "regulatory_control_id": "nis2-art-21",
+      "regulation": "NIS2",
+      "sub_clause_id": null,
+      "technical_control_id": "azure-storage-redundancy-teststorage2",
+      "resource_id": "/subscriptions/test-sub/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/teststorage2",
+      "resource_name": "teststorage2",
+      "severity": "high",
+      "title": "Redundancy / Disaster Recovery Gap on 'teststorage2'",
+      "description": "Resource 'teststorage2' uses local-only redundancy (LRS), failing cross-regional disaster resilience requirements under NIS2 (e.g. DORA Art. 11, NIS2 Art. 21).",
+      "observed_state": {
+        "sku": "Standard_LRS",
+        "redundancy_level": "Locally Redundant (lowest resilience)",
+        "is_geo_redundant": false
+      },
+      "expected_state": {
+        "compliance_status": "compliant"
+      },
+      "remediation_guidance": "az storage account update --name teststorage2 --sku Standard_GRS",
+      "hitl_action": "Verify operational impact before applying infrastructure configuration changes."
+    }
+  ],
+  "metadata": {
+    "total_technical_controls_available": 9,
+    "friction_weight_alpha": 0.35
+  }
+}
