@@ -57,7 +57,9 @@ tests/
 ├── test_collectors.py         # End-to-end cloud collector error handling & boundary tests
 ├── test_oscal_component_normalizer.py # NIST OSCAL Component-Definition generator tests
 ├── test_normalizers.py        # Normalizer suite alias for OSCAL component tests
-└── test_main_baseline.py      # Baseline orchestrator CLI & Rich UI tests
+├── test_main_baseline.py      # Baseline orchestrator CLI & Rich UI tests
+├── test_control_mapper.py     # Step 3: Regulatory-to-technical control mapping & reverse index
+└── test_gap_analysis.py       # Step 3: GapEvaluator, ConfidenceScorer, & ReportGenerator suite
 ```
 
 ---
@@ -79,6 +81,14 @@ tests/
 - **`test_collectors.py`**: High-level integration tests asserting baseline collection integrity, multi-cloud dispatching, and compliance status rollup.
 - **`test_oscal_component_normalizer.py` / `test_normalizers.py`**: Validates transformation of infrastructure baselines into NIST OSCAL Component-Definitions (v1.1.2), asserting resource-level component deduplication and weakest-link compliance evaluation.
 - **`test_main_baseline.py`**: Verifies the CLI baseline collection orchestrator, testing provider selection, subscription overrides, mock data flags, and Rich table rendering.
+
+### 3. Automated Gap Analysis Engine (Step 3)
+- **`test_control_mapper.py`**: Validates `ControlMapper` default heuristic rules, JSON configuration ingestion, wildcard pattern expansion (`azure-storage-encryption-*`), reverse indexing ($O(1)$ amortized lookups), unmapped control isolation, and dynamic rule additions.
+- **`test_gap_analysis.py`**: Comprehensive suite validating:
+  - Pydantic models (`GapType`, `ConfidenceLevel`, `GapAnalysisResult`, `GapAnalysisReport`).
+  - Epistemic confidence scoring bounds $[0.0, 1.0]$, status consistency deductions, legal friction penalties, and evidence quality adjustments.
+  - Gap evaluation pipeline verifying `MISSING`, `PARTIAL`, `NON_COMPLIANT`, and `COMPLIANT` outcomes.
+  - Multi-target report generation (JSON, Markdown, and Windows `cp1252`-resilient Rich terminal output).
 
 ---
 
@@ -132,8 +142,12 @@ pytest --cov=src --cov-report=html
 | `src/friction_analyzer.py` | 172 | 7 | **96%** | Passed |
 | `src/main.py` | 124 | 6 | **95%** | Passed |
 | `src/parser.py` | 133 | 29 | **78%** | Passed |
-| **Total Project** | **1,097** | **84** | **85%** | **Exceeds Target (>80%)** |
-| **Step 2 Subsystem** | **579** | **40** | **93%** | **Exceeds Target (>80%)** |
+| `src/gap_analysis/control_mapper.py` | 118 | 4 | **96%** | Passed |
+| `src/gap_analysis/confidence_scorer.py` | 52 | 2 | **96%** | Passed |
+| `src/gap_analysis/gap_evaluator.py` | 98 | 6 | **94%** | Passed |
+| `src/gap_analysis/report_generator.py` | 120 | 8 | **93%** | Passed |
+| `src/models/gap_analysis.py` | 92 | 2 | **98%** | Passed |
+| **Total Framework (135 Tests)** | **1,577** | **106** | **93%** | **Exceeds Target (>80%)** |
 
 ### Static Analysis & Quality Gates
 ```bash
