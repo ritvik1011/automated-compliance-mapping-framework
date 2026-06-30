@@ -40,7 +40,7 @@ jobs:
 
       - name: Code Formatting Check (Black)
         run: |
-          black --check src/ tests/
+          black --check src/ tests/ --line-length=100
 
       - name: Linting & PEP 8 Style Check (Flake8)
         run: |

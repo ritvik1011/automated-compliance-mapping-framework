@@ -107,14 +107,14 @@ def test_collect_encryption_controls_compliant_storage(
 
     mock_storage_client.storage_accounts.list_by_resource_group.return_value = [mock_account]
 
-    with patch.object(
-        azure_collector, "_get_storage_client", return_value=mock_storage_client
-    ), patch.object(
-        azure_collector, "_list_resource_groups", return_value=["rg-test"]
-    ), patch.object(
-        azure_collector,
-        "_collect_keyvault_encryption_controls",
-        return_value=[],
+    with (
+        patch.object(azure_collector, "_get_storage_client", return_value=mock_storage_client),
+        patch.object(azure_collector, "_list_resource_groups", return_value=["rg-test"]),
+        patch.object(
+            azure_collector,
+            "_collect_keyvault_encryption_controls",
+            return_value=[],
+        ),
     ):
         controls = azure_collector.collect_encryption_controls()
 
@@ -150,9 +150,10 @@ def test_collect_network_controls_detects_risky_rules(
     mock_network_client.network_security_groups.list.return_value = [mock_nsg]
     mock_network_client.public_ip_addresses.list.return_value = []
 
-    with patch.object(
-        azure_collector, "_get_network_client", return_value=mock_network_client
-    ), patch.object(azure_collector, "_list_resource_groups", return_value=["rg-test"]):
+    with (
+        patch.object(azure_collector, "_get_network_client", return_value=mock_network_client),
+        patch.object(azure_collector, "_list_resource_groups", return_value=["rg-test"]),
+    ):
         controls = azure_collector.collect_network_controls()
 
     assert len(controls) >= 1
@@ -178,9 +179,10 @@ def test_collect_backup_controls_geo_redundant(
 
     mock_storage_client.storage_accounts.list_by_resource_group.return_value = [mock_account]
 
-    with patch.object(
-        azure_collector, "_get_storage_client", return_value=mock_storage_client
-    ), patch.object(azure_collector, "_list_resource_groups", return_value=["rg-test"]):
+    with (
+        patch.object(azure_collector, "_get_storage_client", return_value=mock_storage_client),
+        patch.object(azure_collector, "_list_resource_groups", return_value=["rg-test"]),
+    ):
         controls = azure_collector.collect_backup_controls()
 
     assert len(controls) >= 1
