@@ -142,9 +142,7 @@ def test_oscal_regulation_specific_catalogs(
         title="DORA Provision",
         legal_text="Financial risk control text.",
     )
-    catalogs = generator.generate_regulation_catalogs(
-        [sample_article_model, dora_article]
-    )
+    catalogs = generator.generate_regulation_catalogs([sample_article_model, dora_article])
 
     assert "GDPR" in catalogs
     assert "DORA" in catalogs

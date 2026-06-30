@@ -64,9 +64,7 @@ def test_technical_control_rejects_invalid_control_id() -> None:
             resource_name="default-sg",
             control_description="Restricts SSH ingress",
         )
-    assert "control_id must contain only alphanumeric, hyphens, underscores" in str(
-        exc_info.value
-    )
+    assert "control_id must contain only alphanumeric, hyphens, underscores" in str(exc_info.value)
 
 
 def test_infrastructure_baseline_operations() -> None:

@@ -103,9 +103,7 @@ def test_pipeline_error_on_empty_input(tmp_path: Path) -> None:
         verbose=False,
     )
 
-    assert (
-        exit_code == 1
-    ), "Pipeline should exit with code 1 when no articles are found."
+    assert exit_code == 1, "Pipeline should exit with code 1 when no articles are found."
 
 
 def test_pipeline_main_cli_entrypoint(

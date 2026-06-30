@@ -172,9 +172,7 @@ class RegulatoryParser:
         elif isinstance(raw_content, dict):
             if "articles" in raw_content and isinstance(raw_content["articles"], list):
                 articles_data = raw_content["articles"]
-            elif "controls" in raw_content and isinstance(
-                raw_content["controls"], list
-            ):
+            elif "controls" in raw_content and isinstance(raw_content["controls"], list):
                 articles_data = raw_content["controls"]
             else:
                 articles_data = [raw_content]
@@ -251,9 +249,7 @@ class RegulatoryParser:
             else:
                 articles_data = [raw_data]
         else:
-            self.logger.error(
-                "Invalid data format: expected list or dict, got %s", type(raw_data)
-            )
+            self.logger.error("Invalid data format: expected list or dict, got %s", type(raw_data))
             if self.fail_on_error:
                 raise ValueError("Expected raw data to be a list or dict.")
             return []
@@ -261,9 +257,7 @@ class RegulatoryParser:
         parsed_articles: List[RegulatoryArticle] = []
         for idx, item in enumerate(articles_data):
             if not isinstance(item, dict):
-                self.logger.warning(
-                    "Skipping non-dictionary item at index %d: %s", idx, item
-                )
+                self.logger.warning("Skipping non-dictionary item at index %d: %s", idx, item)
                 continue
 
             try:

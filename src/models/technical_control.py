@@ -115,9 +115,7 @@ class TechnicalControl(BaseModel):
     def validate_control_id(cls, v: str) -> str:
         """Ensure control_id follows naming convention."""
         if not v.replace("-", "").replace("_", "").isalnum():
-            raise ValueError(
-                "control_id must contain only alphanumeric, hyphens, underscores"
-            )
+            raise ValueError("control_id must contain only alphanumeric, hyphens, underscores")
         return v
 
 
@@ -158,19 +156,13 @@ class InfrastructureBaseline(BaseModel):
         description="Metadata about the collection process",
     )
 
-    def get_controls_by_category(
-        self, category: ControlCategory
-    ) -> List[TechnicalControl]:
+    def get_controls_by_category(self, category: ControlCategory) -> List[TechnicalControl]:
         """Filter controls by category."""
         return [c for c in self.controls if c.control_category == category]
 
     def get_non_compliant_controls(self) -> List[TechnicalControl]:
         """Get all controls that are non-compliant."""
-        return [
-            c
-            for c in self.controls
-            if c.compliance_status == ComplianceStatus.NON_COMPLIANT
-        ]
+        return [c for c in self.controls if c.compliance_status == ComplianceStatus.NON_COMPLIANT]
 
     def get_compliance_summary(self) -> Dict[str, int]:
         """Generate a summary of compliance status counts."""

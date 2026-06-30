@@ -41,9 +41,7 @@ class BaseCollector(ABC):
                 ...
     """
 
-    def __init__(
-        self, subscription_id: Optional[str] = None, region: Optional[str] = None
-    ) -> None:
+    def __init__(self, subscription_id: Optional[str] = None, region: Optional[str] = None) -> None:
         """Initialize the collector.
 
         Args:
@@ -54,9 +52,7 @@ class BaseCollector(ABC):
         self.region = region
         self.collected_controls: List[TechnicalControl] = []
         self.errors: List[Dict[str, Any]] = []
-        logger.info(
-            f"Initialized {self.__class__.__name__} for subscription: {subscription_id}"
-        )
+        logger.info(f"Initialized {self.__class__.__name__} for subscription: {subscription_id}")
 
     @abstractmethod
     def authenticate(self) -> bool:

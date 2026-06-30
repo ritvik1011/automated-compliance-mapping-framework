@@ -153,10 +153,7 @@ def test_base_collector_error_resilience() -> None:
     assert baseline.collection_metadata["errors_encountered"] == 1
     assert len(baseline.collection_metadata["error_details"]) == 1
     assert baseline.collection_metadata["error_details"][0]["category"] == "Network"
-    assert (
-        "Remote API timed out"
-        in baseline.collection_metadata["error_details"][0]["error"]
-    )
+    assert "Remote API timed out" in baseline.collection_metadata["error_details"][0]["error"]
 
 
 def test_base_collector_save_baseline(tmp_path: Path) -> None:

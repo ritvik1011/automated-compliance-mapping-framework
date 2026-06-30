@@ -152,6 +152,5 @@ def test_friction_analyzer_hitl_guidance_generation(
     assert assessment.friction_level == "High"
     assert len(assessment.hitl_validation_steps) > 0
     assert any(
-        "Cryptographic" in step or "Risk" in step
-        for step in assessment.hitl_validation_steps
+        "Cryptographic" in step or "Risk" in step for step in assessment.hitl_validation_steps
     )

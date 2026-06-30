@@ -60,9 +60,7 @@ class OSCALComponentNormalizer:
         """Build the OSCAL metadata section."""
         now_iso = datetime.now(timezone.utc).isoformat()
         return {
-            "title": (
-                f"Technical Baseline - " f"{self.baseline.cloud_provider.value.upper()}"
-            ),
+            "title": (f"Technical Baseline - " f"{self.baseline.cloud_provider.value.upper()}"),
             "last-modified": now_iso,
             "version": "1.0.0",
             "oscal-version": "1.1.2",
@@ -80,9 +78,7 @@ class OSCALComponentNormalizer:
                 {
                     "uuid": str(uuid.uuid4()),
                     "type": "organization",
-                    "name": (
-                        f"{self.baseline.cloud_provider.value.upper()} " f"Environment"
-                    ),
+                    "name": (f"{self.baseline.cloud_provider.value.upper()} " f"Environment"),
                 }
             ],
             "responsible-parties": [
@@ -145,9 +141,7 @@ class OSCALComponentNormalizer:
                         "value": self._get_overall_status(controls),
                     },
                 ],
-                "control-implementations": self._build_control_implementations(
-                    controls
-                ),
+                "control-implementations": self._build_control_implementations(controls),
             }
             components.append(component)
 
@@ -192,9 +186,7 @@ class OSCALComponentNormalizer:
 
         return implementations
 
-    def _build_implemented_requirement(
-        self, control: TechnicalControl
-    ) -> Dict[str, Any]:
+    def _build_implemented_requirement(self, control: TechnicalControl) -> Dict[str, Any]:
         """Build a single OSCAL implemented-requirement from a TechnicalControl."""
         return {
             "uuid": str(uuid.uuid4()),
@@ -215,8 +207,7 @@ class OSCALComponentNormalizer:
                     "statement-id": f"{control.control_id}_statement",
                     "uuid": str(uuid.uuid4()),
                     "description": (
-                        f"Current state: "
-                        f"{json.dumps(control.current_state, default=str)}"
+                        f"Current state: " f"{json.dumps(control.current_state, default=str)}"
                     ),
                 }
             ],

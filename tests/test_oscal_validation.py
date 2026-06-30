@@ -38,9 +38,7 @@ def generated_catalogs_dir(
         regulation_filter=None,
         verbose=False,
     )
-    assert (
-        exit_code == 0
-    ), "Pipeline must run successfully to produce catalogs for validation."
+    assert exit_code == 0, "Pipeline must run successfully to produce catalogs for validation."
     return out_dir
 
 

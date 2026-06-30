@@ -73,18 +73,10 @@ def print_rich_summary(
     console.print(Panel(banner, border_style="cyan", padding=(1, 2)))
 
     # Metrics Summary Table
-    metrics_table = Table(
-        title="Pipeline Ingestion & Friction Metrics", border_style="blue"
-    )
-    metrics_table.add_column(
-        "Total Ingested Articles", justify="center", style="bold white"
-    )
-    metrics_table.add_column(
-        "High Friction (Non-Binary)", justify="center", style="bold red"
-    )
-    metrics_table.add_column(
-        "Medium Friction (Hybrid HITL)", justify="center", style="bold yellow"
-    )
+    metrics_table = Table(title="Pipeline Ingestion & Friction Metrics", border_style="blue")
+    metrics_table.add_column("Total Ingested Articles", justify="center", style="bold white")
+    metrics_table.add_column("High Friction (Non-Binary)", justify="center", style="bold red")
+    metrics_table.add_column("Medium Friction (Hybrid HITL)", justify="center", style="bold yellow")
     metrics_table.add_column(
         "Low Friction (Fully Automatable)", justify="center", style="bold green"
     )
@@ -193,9 +185,7 @@ def run_pipeline(
     console = Console()
     setup_logging(verbose)
 
-    console.print(
-        f"[bold cyan][>] Ingesting regulatory articles from:[/bold cyan] {input_file}"
-    )
+    console.print(f"[bold cyan][>] Ingesting regulatory articles from:[/bold cyan] {input_file}")
     parser = RegulatoryParser(fail_on_error=False)
     articles = parser.load_from_file(input_file)
 
@@ -250,9 +240,7 @@ def run_pipeline(
     console.print(f"[bold white]Generated Artifacts in '{output_dir}':[/bold white]")
     for cat_path in saved_catalogs:
         console.print(f"  * OSCAL Catalog: [green]{cat_path}[/green]")
-    console.print(
-        f"  * Socio-Technical Friction Report: [green]{friction_report_path}[/green]\n"
-    )
+    console.print(f"  * Socio-Technical Friction Report: [green]{friction_report_path}[/green]\n")
 
     return 0
 

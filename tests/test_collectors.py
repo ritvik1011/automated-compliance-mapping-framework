@@ -74,9 +74,7 @@ def test_azure_collector_authentication_failure(
 
     with patch("src.collectors.azure_collector.SubscriptionClient") as mock_client:
         mock_instance = MagicMock()
-        mock_instance.subscriptions.list.side_effect = ClientAuthenticationError(
-            "Auth failed"
-        )
+        mock_instance.subscriptions.list.side_effect = ClientAuthenticationError("Auth failed")
         mock_client.return_value = mock_instance
 
         collector = AzureCollector()
@@ -107,9 +105,7 @@ def test_collect_encryption_controls_compliant_storage(
     mock_account.encryption.key_source = "Microsoft.Storage"
     mock_account.encryption.require_infrastructure_encryption = True
 
-    mock_storage_client.storage_accounts.list_by_resource_group.return_value = [
-        mock_account
-    ]
+    mock_storage_client.storage_accounts.list_by_resource_group.return_value = [mock_account]
 
     with patch.object(
         azure_collector, "_get_storage_client", return_value=mock_storage_client
@@ -180,9 +176,7 @@ def test_collect_backup_controls_geo_redundant(
     mock_account.location = "westeurope"
     mock_account.sku.name = "Standard_GRS"
 
-    mock_storage_client.storage_accounts.list_by_resource_group.return_value = [
-        mock_account
-    ]
+    mock_storage_client.storage_accounts.list_by_resource_group.return_value = [mock_account]
 
     with patch.object(
         azure_collector, "_get_storage_client", return_value=mock_storage_client
@@ -195,9 +189,7 @@ def test_collect_backup_controls_geo_redundant(
     assert backup_control.control_category == ControlCategory.BACKUP_RECOVERY
 
 
-def test_baseline_save_and_load(
-    azure_collector: AzureCollector, tmp_path: Path
-) -> None:
+def test_baseline_save_and_load(azure_collector: AzureCollector, tmp_path: Path) -> None:
     """Test saving and loading a baseline."""
     control = TechnicalControl(
         control_id="test-control-1",

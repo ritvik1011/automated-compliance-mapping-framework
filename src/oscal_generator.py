@@ -119,10 +119,7 @@ class OSCALGenerator:
             sub_parts: List[Dict[str, Any]] = []
             for sub in article.sub_clauses:
                 sub_id_clean = (
-                    sub.clause_id.replace("(", "")
-                    .replace(")", "")
-                    .replace(" ", "-")
-                    .lower()
+                    sub.clause_id.replace("(", "").replace(")", "").replace(" ", "-").lower()
                 )
                 sub_part: Dict[str, Any] = {
                     "id": f"{control_id}-item-{sub_id_clean}",
@@ -138,9 +135,7 @@ class OSCALGenerator:
         # 2. Socio-Technical Friction & HITL Guidance Part
         if friction:
             reason = friction.get("reason", "No friction rationale documented.")
-            recommendation = friction.get(
-                "recommendation", "No specific recommendation provided."
-            )
+            recommendation = friction.get("recommendation", "No specific recommendation provided.")
             hitl_steps = friction.get("hitl_validation_steps", [])
 
             guidance_prose_lines = [
@@ -150,9 +145,7 @@ class OSCALGenerator:
                 f"**Engineering Recommendation:** {recommendation}",
             ]
             if hitl_steps:
-                guidance_prose_lines.append(
-                    "**Human-in-the-Loop (HITL) Validation Procedures:**"
-                )
+                guidance_prose_lines.append("**Human-in-the-Loop (HITL) Validation Procedures:**")
                 for step in hitl_steps:
                     guidance_prose_lines.append(f"- {step}")
 
@@ -210,9 +203,7 @@ class OSCALGenerator:
         filtered_articles = articles
         if regulation_filter:
             norm_filter = regulation_filter.strip().upper()
-            filtered_articles = [
-                a for a in articles if a.regulation.upper() == norm_filter
-            ]
+            filtered_articles = [a for a in articles if a.regulation.upper() == norm_filter]
 
         catalog_title = title or (
             f"{regulation_filter.upper()} Regulatory Catalog"
@@ -297,9 +288,7 @@ class OSCALGenerator:
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
         export_payload = (
-            {"catalog": catalog_data["catalog"]}
-            if "catalog" in catalog_data
-            else catalog_data
+            {"catalog": catalog_data["catalog"]} if "catalog" in catalog_data else catalog_data
         )
         with open(path, "w", encoding="utf-8") as f:
             json.dump(export_payload, f, indent=2, ensure_ascii=False)

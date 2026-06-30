@@ -54,13 +54,9 @@ console = Console()
 
 def print_baseline_summary(baseline: InfrastructureBaseline) -> None:
     """Print a beautiful summary of the collected baseline."""
-    console.print(
-        "\n[bold cyan]======================================================[/]"
-    )
+    console.print("\n[bold cyan]======================================================[/]")
     console.print("[bold cyan]  Infrastructure Baseline Collection Summary[/]")
-    console.print(
-        "[bold cyan]======================================================[/]\n"
-    )
+    console.print("[bold cyan]======================================================[/]\n")
 
     # Summary table
     table = Table(title="Collection Overview")
@@ -179,9 +175,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
-    console.print(
-        f"\n[bold]Starting baseline collection for {args.provider.upper()}[/]\n"
-    )
+    console.print(f"\n[bold]Starting baseline collection for {args.provider.upper()}[/]\n")
 
     try:
         # Initialize the appropriate collector
@@ -193,9 +187,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             )
         elif args.provider == "aws":
             # AWS collector will be implemented similarly
-            raise NotImplementedError(
-                "AWS collector not yet implemented. Coming in Step 2.5!"
-            )
+            raise NotImplementedError("AWS collector not yet implemented. Coming in Step 2.5!")
         else:
             raise ValueError(f"Unsupported provider: {args.provider}")
 
@@ -213,17 +205,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         if args.oscal_output:
             normalizer = OSCALComponentNormalizer(baseline)
             normalizer.save(args.oscal_output)
-            console.print(
-                f"[green]OSCAL Component-Definition saved to {args.oscal_output}[/]"
-            )
+            console.print(f"[green]OSCAL Component-Definition saved to {args.oscal_output}[/]")
 
-        console.print(
-            "\n[bold green]======================================================[/]"
-        )
+        console.print("\n[bold green]======================================================[/]")
         console.print("[bold green]  Baseline Collection Complete![/]")
-        console.print(
-            "[bold green]======================================================[/]\n"
-        )
+        console.print("[bold green]======================================================[/]\n")
         return 0
 
     except KeyboardInterrupt:

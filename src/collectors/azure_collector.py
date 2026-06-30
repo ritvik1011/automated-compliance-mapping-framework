@@ -137,9 +137,7 @@ class AzureCollector(BaseCollector):
             subscriptions = list(subscription_client.subscriptions.list())
 
             if not subscriptions:
-                logger.error(
-                    "No Azure subscriptions found for the authenticated identity"
-                )
+                logger.error("No Azure subscriptions found for the authenticated identity")
                 return False
 
             # If no subscription specified, use the first one
@@ -163,9 +161,7 @@ class AzureCollector(BaseCollector):
     def _ensure_authenticated(self) -> tuple[Any, str]:
         """Ensure credential and subscription_id are available."""
         if self.credential is None or self.subscription_id is None:
-            raise RuntimeError(
-                "AzureCollector must be authenticated before accessing clients."
-            )
+            raise RuntimeError("AzureCollector must be authenticated before accessing clients.")
         return self.credential, self.subscription_id
 
     def _get_storage_client(self) -> StorageManagementClient:
@@ -188,9 +184,7 @@ class AzureCollector(BaseCollector):
         cred, sub_id = self._ensure_authenticated()
         return KeyVaultManagementClient(cred, sub_id)
 
-    def _fallback_id(
-        self, resource_type: str, resource_group: str, resource_name: str
-    ) -> str:
+    def _fallback_id(self, resource_type: str, resource_group: str, resource_name: str) -> str:
         """Construct fallback ARM resource ID if not provided by SDK object."""
         return (
             f"/subscriptions/{self.subscription_id}/resourceGroups/"
@@ -220,11 +214,7 @@ class AzureCollector(BaseCollector):
                     vm_id = getattr(vm, "id", None) or self._fallback_id(
                         "Microsoft.Compute/virtualMachines", "unknown", vm_name
                     )
-                    rg_name = (
-                        vm_id.split("/")[4]
-                        if len(vm_id.split("/")) > 4
-                        else "unknown-rg"
-                    )
+                    rg_name = vm_id.split("/")[4] if len(vm_id.split("/")) > 4 else "unknown-rg"
 
                     control = TechnicalControl(
                         control_id=f"azure-vm-managed-identity-{vm_name}",
@@ -274,9 +264,7 @@ class AzureCollector(BaseCollector):
                         else "rg-test"
                     )
                     encryption_status = self._check_storage_encryption(account)
-                    acc_name = (
-                        getattr(account, "name", "unknown-storage") or "unknown-storage"
-                    )
+                    acc_name = getattr(account, "name", "unknown-storage") or "unknown-storage"
                     acc_id = getattr(account, "id", None) or self._fallback_id(
                         "Microsoft.Storage/storageAccounts", rg, acc_name
                     )
@@ -290,9 +278,7 @@ class AzureCollector(BaseCollector):
                         resource_name=acc_name,
                         control_description="Storage account encryption at rest status",
                         current_state=encryption_status,
-                        compliance_status=self._evaluate_encryption_compliance(
-                            encryption_status
-                        ),
+                        compliance_status=self._evaluate_encryption_compliance(encryption_status),
                         metadata={
                             "location": getattr(account, "location", "westeurope"),
                             "resource_group": rg,
@@ -312,9 +298,7 @@ class AzureCollector(BaseCollector):
             else:
                 storage_client = self._get_storage_client()
                 for rg in self._list_resource_groups():
-                    for (
-                        account
-                    ) in storage_client.storage_accounts.list_by_resource_group(rg):
+                    for account in storage_client.storage_accounts.list_by_resource_group(rg):
                         encryption_status = self._check_storage_encryption(account)
                         acc_name = account.name or "unknown-storage"
                         acc_id = account.id or self._fallback_id(
@@ -386,9 +370,7 @@ class AzureCollector(BaseCollector):
                 "file": has_file,
             },
             "encryption_key_source": (
-                getattr(encryption, "key_source", "unknown")
-                if encryption
-                else "unknown"
+                getattr(encryption, "key_source", "unknown") if encryption else "unknown"
             ),
             "require_infrastructure_encryption": (
                 getattr(encryption, "require_infrastructure_encryption", False)
@@ -432,9 +414,7 @@ class AzureCollector(BaseCollector):
                 "https_only": https_enabled,
             },
             compliance_status=(
-                ComplianceStatus.COMPLIANT
-                if https_enabled
-                else ComplianceStatus.NON_COMPLIANT
+                ComplianceStatus.COMPLIANT if https_enabled else ComplianceStatus.NON_COMPLIANT
             ),
             metadata={
                 "location": getattr(account, "location", "westeurope"),
@@ -456,9 +436,7 @@ class AzureCollector(BaseCollector):
                     )
                     properties = getattr(vault, "properties", None)
                     soft_delete = (
-                        getattr(properties, "enable_soft_delete", True)
-                        if properties
-                        else True
+                        getattr(properties, "enable_soft_delete", True) if properties else True
                     )
                     purge_protection = (
                         getattr(properties, "enable_purge_protection", False)
@@ -476,9 +454,7 @@ class AzureCollector(BaseCollector):
                         )
                     )
 
-                    vault_name = (
-                        getattr(vault, "name", "unknown-vault") or "unknown-vault"
-                    )
+                    vault_name = getattr(vault, "name", "unknown-vault") or "unknown-vault"
                     vault_id = getattr(vault, "id", None) or self._fallback_id(
                         "Microsoft.KeyVault/vaults", rg, vault_name
                     )
@@ -514,9 +490,7 @@ class AzureCollector(BaseCollector):
                 for rg in self._list_resource_groups():
                     for vault in kv_client.vaults.list_by_resource_group(rg):
                         properties = vault.properties
-                        soft_delete = (
-                            properties.enable_soft_delete if properties else True
-                        )
+                        soft_delete = properties.enable_soft_delete if properties else True
                         purge_protection = (
                             properties.enable_purge_protection if properties else False
                         )
@@ -628,9 +602,7 @@ class AzureCollector(BaseCollector):
                 risky_rules.append(
                     {
                         "rule_name": getattr(rule, "name", "rule"),
-                        "destination_port": getattr(
-                            rule, "destination_port_range", "*"
-                        ),
+                        "destination_port": getattr(rule, "destination_port_range", "*"),
                         "protocol": getattr(rule, "protocol", "*"),
                     }
                 )
@@ -665,9 +637,7 @@ class AzureCollector(BaseCollector):
             },
         )
 
-    def _analyze_public_ip(
-        self, public_ip: Any, resource_group: str
-    ) -> TechnicalControl:
+    def _analyze_public_ip(self, public_ip: Any, resource_group: str) -> TechnicalControl:
         """Analyze a Public IP address for exposure risks."""
         is_associated = getattr(public_ip, "ip_configuration", None) is not None
         pip_name = getattr(public_ip, "name", "unknown-pip") or "unknown-pip"
@@ -689,9 +659,7 @@ class AzureCollector(BaseCollector):
             current_state={
                 "ip_address": getattr(public_ip, "ip_address", "unknown"),
                 "is_associated": is_associated,
-                "allocation_method": getattr(
-                    public_ip, "public_ip_allocation_method", "Dynamic"
-                ),
+                "allocation_method": getattr(public_ip, "public_ip_allocation_method", "Dynamic"),
                 "sku": sku_name,
             },
             compliance_status=ComplianceStatus.UNKNOWN,
@@ -721,12 +689,8 @@ class AzureCollector(BaseCollector):
             else:
                 storage_client = self._get_storage_client()
                 for rg in self._list_resource_groups():
-                    for (
-                        account
-                    ) in storage_client.storage_accounts.list_by_resource_group(rg):
-                        redundancy_control = self._analyze_storage_redundancy(
-                            account, rg
-                        )
+                    for account in storage_client.storage_accounts.list_by_resource_group(rg):
+                        redundancy_control = self._analyze_storage_redundancy(account, rg)
                         controls.append(redundancy_control)
 
             logger.info(f"Collected {len(controls)} backup controls from Azure")
@@ -740,9 +704,7 @@ class AzureCollector(BaseCollector):
 
         return controls
 
-    def _analyze_storage_redundancy(
-        self, account: Any, resource_group: str
-    ) -> TechnicalControl:
+    def _analyze_storage_redundancy(self, account: Any, resource_group: str) -> TechnicalControl:
         """Analyze storage account redundancy (backup) settings."""
         sku = getattr(account, "sku", None)
         sku_name = getattr(sku, "name", "unknown") if sku else "unknown"
@@ -781,8 +743,7 @@ class AzureCollector(BaseCollector):
             current_state={
                 "sku": sku_name,
                 "redundancy_level": redundancy_level,
-                "is_geo_redundant": sku_name
-                in ["Standard_GRS", "Standard_RAGRS", "Standard_GZRS"],
+                "is_geo_redundant": sku_name in ["Standard_GRS", "Standard_RAGRS", "Standard_GZRS"],
             },
             compliance_status=(
                 ComplianceStatus.COMPLIANT

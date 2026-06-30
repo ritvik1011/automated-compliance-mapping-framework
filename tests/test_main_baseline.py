@@ -106,9 +106,7 @@ def test_main_baseline_azure_happy_path(
 
         exit_code = main(argv)
         assert exit_code == 0
-        mock_collector.save_baseline.assert_called_once_with(
-            mock_baseline, str(out_baseline)
-        )
+        mock_collector.save_baseline.assert_called_once_with(mock_baseline, str(out_baseline))
         assert out_oscal.exists()
 
 

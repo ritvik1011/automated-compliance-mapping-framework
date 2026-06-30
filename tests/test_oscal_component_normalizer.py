@@ -132,9 +132,7 @@ def test_oscal_component_grouping_and_types(
     assert storage_comp["description"] == "StorageAccount resource in AZURE"
 
     # stprod had 1 compliant and 1 non-compliant control -> overall status is "non-compliant"
-    status_prop = next(
-        p for p in storage_comp["props"] if p["name"] == "compliance-status"
-    )
+    status_prop = next(p for p in storage_comp["props"] if p["name"] == "compliance-status")
     assert status_prop["value"] == "non-compliant"
 
     # Check control-implementations for storage
@@ -145,9 +143,7 @@ def test_oscal_component_grouping_and_types(
 
     nsg_comp = next(c for c in components if c["title"] == "nsg-web")
     assert nsg_comp["type"] == "network"
-    nsg_status_prop = next(
-        p for p in nsg_comp["props"] if p["name"] == "compliance-status"
-    )
+    nsg_status_prop = next(p for p in nsg_comp["props"] if p["name"] == "compliance-status")
     assert nsg_status_prop["value"] == "compliant"
 
 
@@ -216,8 +212,5 @@ def test_oscal_component_normalizer_save(
     assert out_file.exists()
     data = json.loads(out_file.read_text(encoding="utf-8"))
     assert "component-definition" in data
-    assert (
-        data["component-definition"]["metadata"]["title"]
-        == "Technical Baseline - AZURE"
-    )
+    assert data["component-definition"]["metadata"]["title"] == "Technical Baseline - AZURE"
     assert len(data["component-definition"]["components"]) == 2

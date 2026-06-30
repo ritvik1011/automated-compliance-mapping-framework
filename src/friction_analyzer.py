@@ -36,9 +36,7 @@ class AmbiguityTrigger(BaseModel):
         ...,
         description="Sentence or clause fragment containing the ambiguous phrase.",
     )
-    weight: float = Field(
-        ..., description="Heuristic weight contributing to friction score."
-    )
+    weight: float = Field(..., description="Heuristic weight contributing to friction score.")
 
 
 class FrictionAssessment(BaseModel):
@@ -46,9 +44,7 @@ class FrictionAssessment(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    article_id: str = Field(
-        ..., description="Identifier of the assessed regulatory article."
-    )
+    article_id: str = Field(..., description="Identifier of the assessed regulatory article.")
     regulation: str = Field(..., description="Regulation regime (GDPR, DORA, NIS2).")
     title: str = Field(..., description="Title of the article.")
     friction_level: Literal["Low", "Medium", "High"] = Field(
@@ -296,9 +292,7 @@ class FrictionAnalyzer:
                 # Extract context sentences
                 for match in matches[:2]:  # Limit to 2 context excerpts per trigger
                     match_pos = match.start()
-                    excerpt = self._find_surrounding_sentence(
-                        sentences, full_text, match_pos
-                    )
+                    excerpt = self._find_surrounding_sentence(sentences, full_text, match_pos)
                     ambiguity_details.append(
                         AmbiguityTrigger(
                             phrase=phrase,
@@ -460,9 +454,7 @@ class FrictionAnalyzer:
         """Calculates categorical friction level and Policy-as-Code automation status."""
         has_state_of_the_art = "state of the art" in detected_triggers
         has_proportionality = "Proportionality & Discretion" in categories
-        has_balancing = (
-            "Economic Balancing" in categories or "Contextual Balancing" in categories
-        )
+        has_balancing = "Economic Balancing" in categories or "Contextual Balancing" in categories
 
         # Compounding ambiguity condition
         if (
@@ -580,18 +572,12 @@ class FrictionAnalyzer:
                     "Contains moderate linguistic ambiguity requiring localized configuration "
                     "verification."
                 )
-                recommendation = (
-                    "Combine automated unit verification with human reviewer sign-off."
-                )
-                hitl_steps = [
-                    "Peer review of infrastructure compliance configurations."
-                ]
+                recommendation = "Combine automated unit verification with human reviewer sign-off."
+                hitl_steps = ["Peer review of infrastructure compliance configurations."]
         else:
             reason = " ".join(reason_fragments)
             recommendation = " ".join(recommendation_fragments)
             if not hitl_steps:
-                hitl_steps = [
-                    "Documented risk assessment and compensating control validation."
-                ]
+                hitl_steps = ["Documented risk assessment and compensating control validation."]
 
         return reason, recommendation, hitl_steps
