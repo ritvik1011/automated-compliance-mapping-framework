@@ -26,6 +26,12 @@ azure-mgmt-core                 # Azure core utilities
 jsonschema>=4.20.0              # OSCAL schema validation
 regex>=2024.0.0                 # For Unicode regex support in NIST schemas
 
+# 🆕 NEW - Step 4: Pipeline & Orchestration
+sqlalchemy>=2.0.0
+pandas>=2.0.0
+numpy>=1.24.0
+# apache-airflow>=2.8.0          # Airflow orchestration (run in Linux/WSL/Docker container)
+
 # Code Quality & Development
 black>=24.0.0
 flake8>=7.0.0
