@@ -20,12 +20,12 @@ from datetime import datetime, timedelta
 import logging
 
 try:
-    from airflow import DAG
-    from airflow.operators.python import PythonOperator
-    from airflow.utils.dates import days_ago
+    from airflow import DAG  # type: ignore[attr-defined]
+    from airflow.operators.python import PythonOperator  # type: ignore[attr-defined]
+    from airflow.utils.dates import days_ago  # type: ignore[attr-defined]
 
     AIRFLOW_AVAILABLE = True
-except ImportError:
+except (ImportError, AttributeError):
     AIRFLOW_AVAILABLE = False
     DAG = None  # type: ignore[assignment,misc]
     PythonOperator = None  # type: ignore[assignment,misc]

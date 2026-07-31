@@ -115,9 +115,7 @@ def run_gap_analysis(
         logger.info(f"✓ Gap analysis complete. Reports saved to {output_path}")
 
         summary_dict = (
-            report.summary.model_dump()
-            if hasattr(report.summary, "model_dump")
-            else report.summary
+            report.summary.model_dump() if hasattr(report.summary, "model_dump") else report.summary
         )
 
         # Return metadata for downstream tasks

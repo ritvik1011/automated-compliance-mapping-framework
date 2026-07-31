@@ -24,9 +24,13 @@ from sqlalchemy import (
     Text,
     create_engine,
 )
-from sqlalchemy.orm import declarative_base, relationship, Session
+from sqlalchemy.orm import DeclarativeBase, relationship, Session
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    """Base class for all SQLAlchemy declarative models."""
+
+    pass
 
 
 def _utc_now() -> datetime:

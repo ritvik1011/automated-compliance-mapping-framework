@@ -56,7 +56,7 @@ def pull_infrastructure_configs(
     try:
         # Initialize collector
         if cloud_provider.lower() == "azure":
-            # If no mock path is explicitly given and default mock exists, check if live credentials are absent
+            # Fall back to default mock if no mock path is given and file exists
             if not mock_data_path:
                 default_mock = Path("data/mock_cloud_responses/azure_mock_response.json")
                 if default_mock.exists():

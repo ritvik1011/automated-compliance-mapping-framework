@@ -75,7 +75,9 @@ class ComplianceKPICalculator:
 
         compliance_breakdown = summary_dict.get("compliance_status_breakdown", {})
         if not compliance_breakdown and self.report.results:
-            compliant_c = len([r for r in self.report.results if r.compliance_status == "compliant"])
+            compliant_c = len(
+                [r for r in self.report.results if r.compliance_status == "compliant"]
+            )
             partial_c = len([r for r in self.report.results if r.compliance_status == "partial"])
             non_c = len(
                 [
@@ -168,9 +170,7 @@ class ComplianceKPICalculator:
         )
 
         # High confidence percentage
-        high_confidence_count = len(
-            [r for r in self.report.results if r.confidence_score >= 0.8]
-        )
+        high_confidence_count = len([r for r in self.report.results if r.confidence_score >= 0.8])
         high_confidence_pct = (high_confidence_count / len(self.report.results)) * 100
 
         return {
@@ -187,9 +187,7 @@ class ComplianceKPICalculator:
             }
 
         # Count controls with friction points
-        high_friction_count = len(
-            [r for r in self.report.results if len(r.friction_points) > 0]
-        )
+        high_friction_count = len([r for r in self.report.results if len(r.friction_points) > 0])
 
         friction_rate = (high_friction_count / len(self.report.results)) * 100
 

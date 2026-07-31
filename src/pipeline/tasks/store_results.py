@@ -51,13 +51,13 @@ def store_results(
     if not kpi_metadata:
         kpi_metadata = context.get("kpi_metadata")
 
-    if not all([baseline_metadata, gap_analysis_metadata, kpi_metadata]):
+    if baseline_metadata is None or gap_analysis_metadata is None or kpi_metadata is None:
         raise ValueError("Missing metadata from upstream tasks")
 
     session = None
     try:
         # Load gap analysis report
-        json_report_path = gap_analysis_metadata["json_report_path"]
+        json_report_path = str(gap_analysis_metadata["json_report_path"])
         with open(json_report_path, "r", encoding="utf-8") as f:
             report_data = json.load(f)
 
@@ -70,20 +70,20 @@ def store_results(
         # Store assessment
         assessment = repository.store_assessment(
             report=report,
-            cloud_provider=baseline_metadata["cloud_provider"],
+            cloud_provider=str(baseline_metadata["cloud_provider"]),
             subscription_id=baseline_metadata.get("subscription_id"),
         )
 
+        assessment_id = str(assessment.id)
+
         # Store KPIs
         kpis = kpi_metadata["kpis"]
-        repository.store_kpis(assessment.id, kpis)
+        repository.store_kpis(assessment_id, kpis)
 
-        logger.info(
-            f"✓ Stored assessment {assessment.id} and {len(kpis)} KPIs to database"
-        )
+        logger.info(f"✓ Stored assessment {assessment_id} and {len(kpis)} KPIs to database")
 
         return {
-            "assessment_id": assessment.id,
+            "assessment_id": assessment_id,
             "stored_kpis_count": len(kpis),
             "database_url": database_url,
         }

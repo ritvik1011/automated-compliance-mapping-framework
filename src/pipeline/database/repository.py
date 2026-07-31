@@ -115,9 +115,7 @@ class ComplianceRepository:
         # Store individual control results
         for result in report.results:
             gap_type_str = (
-                result.gap_type.value
-                if hasattr(result.gap_type, "value")
-                else str(result.gap_type)
+                result.gap_type.value if hasattr(result.gap_type, "value") else str(result.gap_type)
             )
             confidence_level_str = (
                 result.confidence_level.value
@@ -193,8 +191,8 @@ class ComplianceRepository:
         return (
             self.session.query(ComplianceAssessment)
             .filter(
-                ComplianceAssessment.assessment_date >= start_date,
-                ComplianceAssessment.assessment_date <= end_date,
+                ComplianceAssessment.assessment_date >= start_date,  # type: ignore[arg-type]
+                ComplianceAssessment.assessment_date <= end_date,  # type: ignore[arg-type]
             )
             .order_by(ComplianceAssessment.assessment_date.desc())
             .all()
