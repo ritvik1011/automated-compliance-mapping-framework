@@ -32,6 +32,14 @@ pandas>=2.0.0
 numpy>=1.24.0
 # apache-airflow>=2.8.0          # Airflow orchestration (run in Linux/WSL/Docker container)
 
+# 🆕 NEW - Step 5: Dashboard & Visualization
+streamlit>=1.30.0              # Core dashboard framework
+plotly>=5.18.0                 # Interactive charts (heatmaps, gauges)
+altair>=5.2.0                  # Statistical visualizations
+matplotlib>=3.8.0              # Fallback for static charts
+openpyxl>=3.1.0                # Excel export
+# weasyprint>=60.0              # PDF report generation (requires GTK on Windows)
+
 # Code Quality & Development
 black>=24.0.0
 flake8>=7.0.0
