@@ -232,6 +232,13 @@ data/*.csv
 data/*.json
 !data/sample_input.json
 
+# Local SQLite databases and runtime assessment test artifacts
+*.db
+*.sqlite3
+baselines/baseline_*_202*.json
+reports/gap_analysis_202*.json
+reports/gap_analysis_202*.md
+
 # OS specific
 .DS_Store
 Thumbs.db

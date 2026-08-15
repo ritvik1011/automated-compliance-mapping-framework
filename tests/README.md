@@ -61,7 +61,8 @@ tests/
 ├── test_control_mapper.py     # Step 3: Regulatory-to-technical control mapping & reverse index
 ├── test_gap_analysis.py       # Step 3: GapEvaluator, ConfidenceScorer, & ReportGenerator suite
 ├── test_pipeline.py           # Step 4: End-to-end Airflow tasks, database models & repositories
-└── test_kpis.py               # Step 4: Multi-factor KPI engine & historical trend queries
+├── test_kpis.py               # Step 4: Multi-factor KPI engine & historical trend queries
+└── test_dashboard.py          # Step 5: Streamlit caching, Plotly visualizations & export tests
 ```
 
 ---
@@ -92,6 +93,16 @@ tests/
   - Gap evaluation pipeline verifying `MISSING`, `PARTIAL`, `NON_COMPLIANT`, and `COMPLIANT` outcomes.
   - Multi-target report generation (JSON, Markdown, and Windows `cp1252`-resilient Rich terminal output).
 
+### 4. Orchestration & Pipeline Automation (Step 4)
+- **`test_pipeline.py`**: Verifies sequential task dependencies (Tasks 1 -> 4), XCom metadata passing, SQLite/PostgreSQL relational model persistence, and repository isolation.
+- **`test_kpis.py`**: Tests the `ComplianceKPICalculator` across 19 standard metrics (overall rates, regulation compliance, average confidence, high friction percentages).
+
+### 5. KPI Visualization & Socio-Technical Reporting (Step 5)
+- **`test_dashboard.py`**: Validates:
+  - Streamlit caching mechanisms (`@st.cache_resource`, `@st.cache_data`) and database connection resiliency.
+  - Interactive Plotly figures (compliance gauges, domain heatmaps, confidence scatter plots, friction impact bar charts).
+  - Multi-format board export engine (multi-sheet Excel `.xlsx` workbook generation and print-ready executive `.html`/`.pdf` reports).
+
 ---
 
 ## 🧪 Zero-Credential Testing Strategy
@@ -107,13 +118,13 @@ To guarantee that academic peer reviewers and CI/CD pipelines can reproduce all 
 
 ### Quick Execution
 ```bash
-# Run all 93 test cases
+# Run all 150 automated test cases across all 5 framework steps
 pytest -v
 ```
 
-### Run Step 2 Collector & Normalizer Tests Specifically
+### Run Step 5 Dashboard Tests Specifically
 ```bash
-pytest tests/test_collectors.py tests/test_normalizers.py -v
+pytest tests/test_dashboard.py -v
 ```
 
 ### Run with Coverage Telemetry
