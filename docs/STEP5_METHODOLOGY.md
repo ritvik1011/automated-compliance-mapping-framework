@@ -111,21 +111,69 @@ To support formal governance workflows, Step 5 incorporates a comprehensive expo
 
 ## Deployment Options
 
-### 1. Local Development
-```bash
-# Activate virtual environment
-.\venv\Scripts\Activate.ps1
-
-# Run dashboard locally
-streamlit run src/dashboard/app.py
-```
+### 1. Local Development & Desktop Launchers
+For zero-friction local execution on Windows and cross-platform environments:
+- **Windows Desktop Launcher**: Double-click `run_dashboard.bat` in the project root. It auto-detects the virtual environment (`venv`), sets UTF-8 console encoding, and launches the dashboard.
+- **Python Launcher Script**: Run `python run_dashboard.py` from the project root.
+- **Direct Streamlit CLI**:
+  ```bash
+  streamlit run src/dashboard/app.py
+  ```
 Access via browser at `http://localhost:8501`.
+
+---
+
+## Local Execution Architecture & Troubleshooting
+
+### 1. The `sys.path` Module Resolution Challenge
+When Streamlit executes an entry point file (e.g., `streamlit run src/dashboard/app.py`), Python assigns `sys.path[0]` to the directory of the target script (`src/dashboard/`), rather than the project root directory (`automated-compliance-mapping-framework/`). 
+
+As a result, relative absolute imports adhering to standard package layouts (e.g., `from src.dashboard.database import ...`) fail with:
+```text
+ModuleNotFoundError: No module named 'src'
+```
+
+### 2. Architectural Solution: Defense-in-Depth Path Resolution
+To ensure foolproof execution across all environments (local development, terminal CLI, batch launchers, and Streamlit Community Cloud), the framework implements a two-tier resolution strategy:
+
+1. **Dynamic Path Injection in App & Multi-Page Scripts**:
+   At the very top of `src/dashboard/app.py` and all files in `src/dashboard/pages/`, the project root is dynamically computed and injected into `sys.path` before any package imports:
+   ```python
+   # In src/dashboard/app.py (3 levels up: app.py -> dashboard -> src -> root)
+   import sys
+   from pathlib import Path
+   PROJECT_ROOT = Path(__file__).resolve().parents[2]
+   if str(PROJECT_ROOT) not in sys.path:
+       sys.path.insert(0, str(PROJECT_ROOT))
+   ```
+   For multi-page files in `src/dashboard/pages/`, the calculation traverses 4 levels up (`.parents[3]`), guaranteeing that each page is self-contained and independently navigable.
+
+2. **Dedicated Launcher Harness (`run_dashboard.py` & `run_dashboard.bat`)**:
+   - `run_dashboard.py`: Resolves the project root, mutates `sys.path`, injects `PYTHONPATH` into child process environments, sets `PYTHONIOENCODING=utf-8`, and delegates execution to `sys.executable -m streamlit run src/dashboard/app.py`.
+   - `run_dashboard.bat`: Automates virtual environment activation (`venv` or `.venv`), configures Windows terminal codepage to UTF-8 (`chcp 65001`), forwards CLI parameters, and keeps the terminal open on errors via `pause`.
+
+### 3. Troubleshooting Matrix
+
+| Issue / Symptom | Root Cause | Resolution |
+| :--- | :--- | :--- |
+| `ModuleNotFoundError: No module named 'src'` | Execution context lacks project root in `sys.path` | Use `run_dashboard.bat` / `python run_dashboard.py` or verify dynamic path injection at top of `app.py`. |
+| `UnicodeEncodeError: 'charmap' codec can't encode...` | Windows terminal defaults to legacy code page (CP1252) | Set `PYTHONIOENCODING=utf-8` or use `run_dashboard.bat` which executes `chcp 65001`. |
+| `Port 8501 is already in use` | Another Streamlit or local web instance occupies default port | Pass custom port flag: `python run_dashboard.py --server.port 8502`. |
+| `sqlite3.OperationalError: no such table` | Database has not been seeded with assessment data | Run `python populate_demo_data.py` to generate the mock SQLite database (`compliance.db`). |
+| Streamlit page reload loses package context | Sub-page executed in isolated thread without parent state | Reusable `.parents[3]` path injection at top of each page file in `src/dashboard/pages/`. |
+
+---
+
+## Deployment Options
+
+### 1. Local Development
+Run `run_dashboard.bat` or `python run_dashboard.py`.
 
 ### 2. Streamlit Cloud (Production)
 1. Push code repository to GitHub.
 2. Connect repository to [Streamlit Community Cloud](https://streamlit.io/cloud).
 3. Set main file path: `src/dashboard/app.py`.
-4. Deploy with one click.
+4. Deploy with one click. Detailed deployment guide available in [`docs/DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE.md).
 
 ### 3. Docker (Enterprise Container)
 ```dockerfile

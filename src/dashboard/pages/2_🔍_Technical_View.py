@@ -4,6 +4,15 @@ This page provides detailed compliance heatmaps and technical breakdowns
 for security engineers and compliance officers.
 """
 
+import sys
+from pathlib import Path
+
+# Add project root directory to sys.path before any local imports
+# Hierarchy: page.py -> pages -> dashboard -> src -> project_root
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import streamlit as st
 
 from src.dashboard.database import (
