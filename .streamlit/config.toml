@@ -1,0 +1,22 @@
+# Streamlit Configuration for Automated Compliance Mapping Framework
+# Production & Cloud Deployment Settings
+
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+port = 8501
+maxUploadSize = 25
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#0066CC"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F8F9FA"
+textColor = "#212529"
+font = "sans serif"
+
+[client]
+showErrorDetails = true
