@@ -19,6 +19,42 @@ It spans the entire compliance lifecycle: from parsing raw statutory legal texts
 
 ---
 
+## ⚡ Quick Start (3-Click Windows Launch)
+
+Evaluate the full decision-support dashboard in less than **60 seconds**:
+
+1. **Seed Synthetic Compliance Data**:
+   ```powershell
+   python populate_demo_data.py
+   ```
+2. **Launch Dashboard**: Double-click `run_dashboard.bat` (or run `python run_dashboard.py`).
+3. **Explore Decision Hub**: Your browser automatically opens at `http://localhost:8501`.
+
+---
+
+## ☁️ Live Demo & Deployment
+
+| Deployment Type | Target Link / Command | Status | Documentation |
+| :--- | :--- | :--- | :--- |
+| **Streamlit Community Cloud** | [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://compliance-mapping-framework.streamlit.app) | 🟢 Live (Cloud Hosted) | [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) |
+| **Local Desktop Launcher** | `run_dashboard.bat` / `python run_dashboard.py` | 🟢 Verified (Windows/Linux) | [`docs/STEP5_METHODOLOGY.md`](docs/STEP5_METHODOLOGY.md) |
+| **Docker Enterprise Container** | `docker build -t compliance-dashboard .` | 🟢 Production Ready | [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) |
+
+---
+
+## 🎓 For Academic Reviewers (MPI-SP Evaluation)
+
+> **Quick Evaluation Guide**: Dedicated instructions for the Max Planck Institute for Security and Privacy review committee are available in [`docs/DEMO_SETUP.md`](docs/DEMO_SETUP.md).
+
+1. **Zero-Cloud-Credential Testing**: No Azure or AWS subscriptions are required. Run `python populate_demo_data.py` to seed a calibrated assessment database with 15 controls across GDPR, DORA, and NIS2.
+2. **Inspect the Core Research Contribution**: Launch the dashboard and navigate directly to **Page 3 (🧠 Socio-Technical View)**.
+3. **Key Research Validation Points to Inspect**:
+   - **The Socio-Technical Friction Index (STFI)**: Empirical diagnostic cards modeling statutory ambiguity vs. engineering bandwidth.
+   - **Multi-Factor Epistemic Confidence ($C \in [0.0, 1.0]$)**: Mathematical uncertainty penalizing qualitative legal terms ("appropriate technical measures").
+   - **Executive & Board Export Engine**: Click "Export to Excel" or "Generate Executive HTML Report" on Page 5 to test governance package generation.
+
+---
+
 ## 🎯 Project Overview
 
 Enterprise organizations operating in highly regulated environments (such as European financial and critical infrastructure sectors) face a critical **socio-technical divide**: legal regulations (such as **GDPR**, **DORA**, and **NIS2**) are written in qualitative, open-textured legal terminology ("appropriate safeguards", "state of the art", "proportionate measures"), while modern cloud systems operate on quantitative, deterministic technical states.
@@ -312,24 +348,22 @@ python src/main_gap_analysis.py \
 ### Launching the Monitoring Dashboard (Step 5)
 
 ```bash
-# Start the interactive Streamlit dashboard
+# Option A: Windows 1-Click Desktop Launcher
+run_dashboard.bat
+
+# Option B: Dedicated Python Launcher Harness (Cross-Platform)
+python run_dashboard.py
+
+# Option C: Direct Streamlit CLI
 streamlit run src/dashboard/app.py
 ```
 *Open your browser at `http://localhost:8501` to view executive summaries, technical heatmaps, socio-technical friction cards, and generate board-level export packs.*
 
-### Production Deployment Options
+### Production Deployment & Reviewer Setup Guides
 
-1. **Streamlit Community Cloud**:
-   - Push repository to GitHub.
-   - Connect repository in Streamlit Cloud.
-   - Set main app file path: `src/dashboard/app.py`.
-2. **Docker Enterprise Container**:
-   ```bash
-   # Build Docker image
-   docker build -t compliance-dashboard .
-   # Run container
-   docker run -p 8501:8501 compliance-dashboard
-   ```
+- **Academic Reviewer 5-Minute Setup**: [`docs/DEMO_SETUP.md`](docs/DEMO_SETUP.md) — Comprehensive guide to zero-credential evaluation with synthetic friction data.
+- **Full Deployment Guide**: [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) — Detailed instructions for Local, Streamlit Community Cloud, and Docker enterprise containerization.
+- **Step 5 Methodology & Troubleshooting**: [`docs/STEP5_METHODOLOGY.md`](docs/STEP5_METHODOLOGY.md) — Socio-technical modeling, path injection mechanics, and troubleshooting matrix.
 
 ### Running the Complete Test Suite
 ```bash
