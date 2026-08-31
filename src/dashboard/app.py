@@ -22,10 +22,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-import streamlit as st
+import streamlit as st  # noqa: E402
 
-from src.dashboard.database import get_latest_assessment_data
-from src.dashboard.export import export_assessment_to_excel, generate_executive_html_report
+from src.dashboard.database import get_latest_assessment_data  # noqa: E402
+from src.dashboard.export import (  # noqa: E402
+    export_assessment_to_excel,
+    generate_executive_html_report,
+)
 
 # Configure page
 st.set_page_config(

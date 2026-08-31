@@ -19,21 +19,24 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-import streamlit as st
-import pandas as pd
+import streamlit as st  # noqa: E402
+import pandas as pd  # noqa: E402
 
-from src.dashboard.database import (
+from src.dashboard.database import (  # noqa: E402
     get_latest_assessment_data,
     get_all_assessments_summary,
     get_compliance_by_regulation,
     get_compliance_by_category,
 )
-from src.dashboard.visualizations import (
+from src.dashboard.visualizations import (  # noqa: E402
     create_compliance_gauge,
     create_regulation_breakdown_chart,
     create_category_pie_chart,
 )
-from src.dashboard.export import export_assessment_to_excel, generate_executive_html_report
+from src.dashboard.export import (  # noqa: E402
+    export_assessment_to_excel,
+    generate_executive_html_report,
+)
 
 st.set_page_config(page_title="Executive Summary", page_icon="📊", layout="wide")
 

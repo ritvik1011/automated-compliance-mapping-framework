@@ -13,13 +13,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-import streamlit as st
+import streamlit as st  # noqa: E402
 
-from src.dashboard.database import (
+from src.dashboard.database import (  # noqa: E402
     get_all_assessments_summary,
     get_kpi_trend,
 )
-from src.dashboard.visualizations import create_trend_line_chart
+from src.dashboard.visualizations import create_trend_line_chart  # noqa: E402
 
 st.set_page_config(page_title="Trend Analysis", page_icon="📈", layout="wide")
 

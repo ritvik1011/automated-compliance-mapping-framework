@@ -13,14 +13,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-import streamlit as st
+import streamlit as st  # noqa: E402
 
-from src.dashboard.database import (
+from src.dashboard.database import (  # noqa: E402
     get_compliance_by_category,
     get_compliance_by_regulation,
     get_latest_assessment_data,
 )
-from src.dashboard.visualizations import (
+from src.dashboard.visualizations import (  # noqa: E402
     create_compliance_heatmap,
     create_confidence_scatter,
 )

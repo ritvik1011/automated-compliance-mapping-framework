@@ -12,10 +12,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-import json
-import streamlit as st
+import json  # noqa: E402
+import streamlit as st  # noqa: E402
 
-from src.dashboard.database import get_latest_assessment_data
+from src.dashboard.database import get_latest_assessment_data  # noqa: E402
 
 st.set_page_config(page_title="Detailed Controls", page_icon="📋", layout="wide")
 
