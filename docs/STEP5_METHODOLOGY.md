@@ -113,7 +113,8 @@ To support formal governance workflows, Step 5 incorporates a comprehensive expo
 
 ### 1. Local Development & Desktop Launchers
 For zero-friction local execution on Windows and cross-platform environments:
-- **Windows Desktop Launcher**: Double-click `run_dashboard.bat` in the project root. It auto-detects the virtual environment (`venv`), sets UTF-8 console encoding, and launches the dashboard.
+- **Windows Diagnostic Batch Launcher**: Double-click `run_dashboard.bat` in the project root. It auto-detects `venv`, configures UTF-8 console encoding, avoids parenthesis-parsing traps, and halts on exit with `pause`.
+- **Windows PowerShell Launcher**: Right-click `run_dashboard.ps1` -> "Run with PowerShell" (or execute `powershell -ExecutionPolicy Bypass -File .\run_dashboard.ps1`).
 - **Python Launcher Script**: Run `python run_dashboard.py` from the project root.
 - **Direct Streamlit CLI**:
   ```bash
@@ -148,15 +149,18 @@ To ensure foolproof execution across all environments (local development, termin
    ```
    For multi-page files in `src/dashboard/pages/`, the calculation traverses 4 levels up (`.parents[3]`), guaranteeing that each page is self-contained and independently navigable.
 
-2. **Dedicated Launcher Harness (`run_dashboard.py` & `run_dashboard.bat`)**:
+2. **Dedicated Launcher Harness (`run_dashboard.py`, `run_dashboard.bat`, `run_dashboard.ps1`)**:
    - `run_dashboard.py`: Resolves the project root, mutates `sys.path`, injects `PYTHONPATH` into child process environments, sets `PYTHONIOENCODING=utf-8`, and delegates execution to `sys.executable -m streamlit run src/dashboard/app.py`.
-   - `run_dashboard.bat`: Automates virtual environment activation (`venv` or `.venv`), configures Windows terminal codepage to UTF-8 (`chcp 65001`), forwards CLI parameters, and keeps the terminal open on errors via `pause`.
+   - `run_dashboard.bat`: Automates virtual environment activation (`venv` or `.venv`), configures Windows terminal codepage to UTF-8 (`chcp 65001`), anchors paths via `%~dp0`, logs Python environment diagnostics, forwards CLI parameters, and keeps the terminal open on errors or clean exits via `pause`.
+   - `run_dashboard.ps1`: Modern Windows PowerShell alternative with UTF-8 encoding, execution policy bypass support, and error trapping.
 
 ### 3. Troubleshooting Matrix
 
 | Issue / Symptom | Root Cause | Resolution |
 | :--- | :--- | :--- |
-| `ModuleNotFoundError: No module named 'src'` | Execution context lacks project root in `sys.path` | Use `run_dashboard.bat` / `python run_dashboard.py` or verify dynamic path injection at top of `app.py`. |
+| `... was unexpected at this time.` (Batch window closes instantly) | Unescaped parenthesis `(venv)` inside an `if (...)` batch block causes premature parser termination | Resolved in rewritten `run_dashboard.bat` by using sequential label jumps (`goto`) and escaping. |
+| `File ... cannot be loaded because running scripts is disabled` | Windows PowerShell ExecutionPolicy defaults to `Restricted` | Execute with bypass flag: `powershell -ExecutionPolicy Bypass -File .\run_dashboard.ps1`. |
+| `ModuleNotFoundError: No module named 'src'` | Execution context lacks project root in `sys.path` | Use `run_dashboard.bat` / `run_dashboard.ps1` / `python run_dashboard.py` or verify dynamic path injection at top of `app.py`. |
 | `UnicodeEncodeError: 'charmap' codec can't encode...` | Windows terminal defaults to legacy code page (CP1252) | Set `PYTHONIOENCODING=utf-8` or use `run_dashboard.bat` which executes `chcp 65001`. |
 | `Port 8501 is already in use` | Another Streamlit or local web instance occupies default port | Pass custom port flag: `python run_dashboard.py --server.port 8502`. |
 | `sqlite3.OperationalError: no such table` | Database has not been seeded with assessment data | Run `python populate_demo_data.py` to generate the mock SQLite database (`compliance.db`). |

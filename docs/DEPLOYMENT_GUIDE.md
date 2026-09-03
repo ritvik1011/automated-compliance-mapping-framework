@@ -23,19 +23,43 @@ This guide provides exhaustive, end-to-end instructions for deploying the **Auto
 
 Local deployment is designed for zero friction on Windows, macOS, and Linux workstations.
 
-### 1. Quick Launch (Windows 1-Click)
-If you are on Windows, simply double-click:
+### 1. Windows Desktop Launchers
+
+#### Option A: Diagnostic Batch Launcher (`run_dashboard.bat`)
+For 1-click execution on Windows, double-click `run_dashboard.bat` in the project root.
 ```text
 run_dashboard.bat
 ```
-This batch script executes the following automated sequence:
-1. Changes working directory to the project root (`cd /d "%~dp0"`).
-2. Enables UTF-8 codepage output (`chcp 65001`) to support emojis and symbols.
-3. Auto-detects and activates the local virtual environment (`venv\Scripts\activate.bat`).
-4. Executes `python run_dashboard.py %*`.
-5. Keeps the console window open on failure via `pause` for effortless error diagnosis.
+This batch script executes a hardened diagnostic sequence:
+1. **UTF-8 Console Mode**: Executes `chcp 65001` and sets `PYTHONIOENCODING=utf-8` to render emojis and Unicode metrics cleanly.
+2. **Directory Anchoring**: Switches working directory directly to script root via `cd /d "%~dp0"`, preventing directory drifting when run as Administrator or from Explorer.
+3. **Environment Detection**: Checks for and activates `venv\Scripts\activate.bat` (or `.venv`), falling back gracefully to system Python if unconfigured.
+4. **Interpreter Validation**: Queries `where python` and logs the exact Python version and path.
+5. **Execution Harness**: Runs `python run_dashboard.py %*`.
+6. **Guaranteed Diagnostic Pause**: Intercepts the process exit code and halts with `pause` before exiting so the console window never flashes or disappears without user input.
 
-### 2. Cross-Platform Terminal Launch
+#### Option B: PowerShell Alternative (`run_dashboard.ps1`)
+Modern Windows installations can leverage the native PowerShell launcher:
+```powershell
+.\run_dashboard.ps1
+```
+- **Context Menu Launch**: Right-click `run_dashboard.ps1` and select **"Run with PowerShell"**.
+- **Execution Policy Bypass (Single Session)**: If script execution is restricted by Windows default policy (`Restricted` or `AllSigned`), launch with:
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File .\run_dashboard.ps1
+  ```
+- **Desktop Shortcut Configuration**: Target string for creating a 1-click Desktop shortcut:
+  ```text
+  powershell.exe -ExecutionPolicy Bypass -NoExit -File "%USERPROFILE%\Desktop\automated-compliance-mapping-framework\run_dashboard.ps1"
+  ```
+
+### 2. Environment Verification Command
+To verify that Python, the virtual environment, and Streamlit are healthy independently of any launcher script, paste this command into Command Prompt:
+```cmd
+venv\Scripts\python.exe -c "import streamlit, sys; print('SUCCESS: Python ' + sys.version.split()[0] + ' and Streamlit ' + streamlit.__version__ + ' are working in venv!')"
+```
+
+### 3. Cross-Platform Terminal Launch
 From Windows PowerShell, Command Prompt, or Linux/macOS bash:
 
 ```bash
@@ -52,7 +76,7 @@ python populate_demo_data.py
 python run_dashboard.py
 ```
 
-### 3. Direct Streamlit CLI Launch
+### 4. Direct Streamlit CLI Launch
 Thanks to the dynamic `sys.path` injection at the top of `src/dashboard/app.py`, native Streamlit commands function seamlessly:
 
 ```bash

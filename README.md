@@ -27,7 +27,7 @@ Evaluate the full decision-support dashboard in less than **60 seconds**:
    ```powershell
    python populate_demo_data.py
    ```
-2. **Launch Dashboard**: Double-click `run_dashboard.bat` (or run `python run_dashboard.py`).
+2. **Launch Dashboard**: Double-click `run_dashboard.bat` (or right-click `run_dashboard.ps1` -> Run with PowerShell, or run `python run_dashboard.py`).
 3. **Explore Decision Hub**: Your browser automatically opens at `http://localhost:8501`.
 
 ---
@@ -37,7 +37,7 @@ Evaluate the full decision-support dashboard in less than **60 seconds**:
 | Deployment Type | Target Link / Command | Status | Documentation |
 | :--- | :--- | :--- | :--- |
 | **Streamlit Community Cloud** | [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://compliance-mapping-framework.streamlit.app) | 🟢 Live (Cloud Hosted) | [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) |
-| **Local Desktop Launcher** | `run_dashboard.bat` / `python run_dashboard.py` | 🟢 Verified (Windows/Linux) | [`docs/STEP5_METHODOLOGY.md`](docs/STEP5_METHODOLOGY.md) |
+| **Local Desktop Launcher** | `run_dashboard.bat` / `run_dashboard.ps1` / `python run_dashboard.py` | 🟢 Verified (Windows/Linux) | [`docs/STEP5_METHODOLOGY.md`](docs/STEP5_METHODOLOGY.md) |
 | **Docker Enterprise Container** | `docker build -t compliance-dashboard .` | 🟢 Production Ready | [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) |
 
 ---
@@ -348,13 +348,17 @@ python src/main_gap_analysis.py \
 ### Launching the Monitoring Dashboard (Step 5)
 
 ```bash
-# Option A: Windows 1-Click Desktop Launcher
+# Option A: Windows 1-Click Diagnostic Batch Launcher
 run_dashboard.bat
 
-# Option B: Dedicated Python Launcher Harness (Cross-Platform)
+# Option B: Windows PowerShell Launcher (Robust Context & Diagnostics)
+powershell -ExecutionPolicy Bypass -File .\run_dashboard.ps1
+# (Or right-click run_dashboard.ps1 -> "Run with PowerShell")
+
+# Option C: Dedicated Python Launcher Harness (Cross-Platform)
 python run_dashboard.py
 
-# Option C: Direct Streamlit CLI
+# Option D: Direct Streamlit CLI
 streamlit run src/dashboard/app.py
 ```
 *Open your browser at `http://localhost:8501` to view executive summaries, technical heatmaps, socio-technical friction cards, and generate board-level export packs.*
